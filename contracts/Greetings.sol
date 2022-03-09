@@ -15,7 +15,7 @@ contract Greetings is ConsumerBase {
     // Store greetings
     Greeting[] public greetings;
 
-    // Store last message info
+    // Store context of cross chain contract
     SimplifiedMessage public context;
 
     /**

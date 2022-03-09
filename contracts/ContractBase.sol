@@ -35,7 +35,7 @@ contract ConsumerBase is Ownable {
      * @param _contractAddress - contract address
      * @param _methodName - contract action bane
      */
-    function registerDestinationChain(
+    function registerDestinationContract(
         string calldata _toChain,
         string calldata _contractAddress,
         string calldata _methodName
@@ -75,7 +75,7 @@ contract ConsumerBase is Ownable {
      * @param _sender - sender of cross chain message
      * @param _methodName - action name which allowed to be invoked
      */
-    function registerSourceChain(
+    function registerSourceContract(
         string calldata _chainName,
         string calldata _sender,
         string calldata _methodName
@@ -97,7 +97,7 @@ contract ConsumerBase is Ownable {
     }
 
     /**
-     * This verify method which will be invoked by the CrossChain contract automatically, ensure that only registered contract(registerSourceSender) calls are allowed
+     * This verify method will be invoked by the CrossChain contract automatically, ensure that only registered contract(registerSourceContract) calls are allowed
      * @param _chainName - chain name of cross chain message
      * @param _methodName - contract action name of cross chain message
      * @param _sender - cross chain message sender

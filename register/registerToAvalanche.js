@@ -39,10 +39,10 @@ const greetingContract = new web3.eth.Contract(greetingAbi, avalancheGreetingCon
   await avalanche.sendTransaction(greetingContract, 'setCrossChainContract', testAccountPrivateKey, [crossChainContractAddress]);
 
   // Register contract info for sending messages to other chains
-  await avalanche.sendTransaction(greetingContract, 'registerDestinationChain', testAccountPrivateKey, [destinationChainName, nearGreetingContractAddress, contractActionName]);
+  await avalanche.sendTransaction(greetingContract, 'registerDestinationContract', testAccountPrivateKey, [destinationChainName, nearGreetingContractAddress, contractActionName]);
   await avalanche.sendTransaction(greetingContract, 'registerDestinationAction', testAccountPrivateKey, [contractActionName, actionParamsType, actionParamsName]);
 
   // Register contract info for receiving messages from other chains.
-  await avalanche.sendTransaction(greetingContract, 'registerSourceChain', testAccountPrivateKey, [destinationChainName, nearGreetingContractAddress, contractActionName]);
+  await avalanche.sendTransaction(greetingContract, 'registerSourceContract', testAccountPrivateKey, [destinationChainName, nearGreetingContractAddress, contractActionName]);
   await avalanche.sendTransaction(greetingContract, 'registerSourceAction', testAccountPrivateKey, [contractActionName, actionABI]);
 }());
