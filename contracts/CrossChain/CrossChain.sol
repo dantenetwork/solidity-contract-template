@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0 <0.9.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
+
+// ****to be modified****
+// delete
 import "./DanteToken.sol";
+
 import "./ICrossChain.sol";
 
 // string constant FROM_CHAIN_NAME = "PlatON";

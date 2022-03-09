@@ -16,7 +16,7 @@ contract Greetings is ConsumerBase {
     Greeting[] public greetings;
 
     // Store context of cross chain contract
-    SimplifiedMessage public context;
+    // SimplifiedMessage public context;
 
     /**
      * Receive greeting info from other chains
@@ -35,6 +35,16 @@ contract Greetings is ConsumerBase {
             msg.sender == address(crossChainContract),
             "Locker: caller is not CrossChain"
         );
+
+        // `context` used for verify the operation authority
+        SimplifiedMessage context = getContext();
+        // verify sqos
+        require(context.sqos.reveal == 1, "SQoS invalid!");
+
+        // verify the sender from the source chain
+        mapping(string => string) storage map = sourceChainMap[context.fromChain];
+        require(map[contex.action] == context.sender);
+
         Greeting storage g = greetings.push();
         g.fromChain = _fromChain;
         g.title = _title;
@@ -42,7 +52,7 @@ contract Greetings is ConsumerBase {
         g.date = _date;
 
         // Get message info from CrossChain contract context
-        context = crossChainContract.getCurrentMessage();
+        // context = crossChainContract.getCurrentMessage();
     }
 
     /**
@@ -73,8 +83,12 @@ contract Greetings is ConsumerBase {
         );
     }
 
+    // ****to be modified****
+    // move to the `receiver part` of `ContractBase`
+
     // return context info
     function getContext() external view returns (SimplifiedMessage memory) {
-        return context;
+        // return context;
+        return crossChainContract.getCurrentMessage();
     }
 }

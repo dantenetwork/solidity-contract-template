@@ -35,6 +35,8 @@ contract ConsumerBase is Ownable {
      * @param _contractAddress - contract address
      * @param _methodName - contract action bane
      */
+    //  ****to be modified****
+    // move to `greetings`
     function registerDestinationContract(
         string calldata _toChain,
         string calldata _contractAddress,
@@ -57,6 +59,8 @@ contract ConsumerBase is Ownable {
         string calldata _paramType,
         string calldata _paramName
     ) external onlyOwner {
+        // ****to be modified****
+        // move out of underly `CrossChain` contract
         crossChainContract.registerTarget(
             _funcName,
             _paramType,
@@ -64,6 +68,13 @@ contract ConsumerBase is Ownable {
             ""
         );
     }
+
+    // ****to be modified****
+    // add get method for ABI to decode sent message
+    // function get...() public {
+
+    } 
+
 
     ///////////////////////////////////////////////
     ///    Receive messages from other chains   ///
@@ -75,6 +86,8 @@ contract ConsumerBase is Ownable {
      * @param _sender - sender of cross chain message
      * @param _methodName - action name which allowed to be invoked
      */
+    //  ****to be modified****
+    // move to `greetings`
     function registerSourceContract(
         string calldata _chainName,
         string calldata _sender,
@@ -102,6 +115,7 @@ contract ConsumerBase is Ownable {
      * @param _methodName - contract action name of cross chain message
      * @param _sender - cross chain message sender
      */
+    //  Will be deprecated soon
     function verify(
         string calldata _chainName,
         string calldata _methodName,

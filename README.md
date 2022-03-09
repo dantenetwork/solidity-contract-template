@@ -1,5 +1,7 @@
 # solidity-contract-template
 
+**This is under construction!**
+
 This repo contains a basic `greeting` smart contract integrated with DANTE cross-chain service.
 
 Dependencies:
