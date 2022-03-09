@@ -58,7 +58,7 @@ contract Greetings is ConsumerBase {
         string calldata _content,
         string calldata _date
     ) external {
-        DestinationMethod storage method = methodMap[_toChain];
+        DestinationChain storage method = destinationChainMap[_toChain];
         require(method.used, "method not registered");
 
         bytes memory data = abi.encode("Avalanche", _title, _content, _date);

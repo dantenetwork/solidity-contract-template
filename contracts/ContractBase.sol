@@ -4,7 +4,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./CrossChain/CrossChain.sol";
 
 contract ConsumerBase is Ownable {
-    struct DestinationMethod {
+    struct DestinationChain {
         string contractAddress;
         string methodName;
         bool used;
@@ -13,7 +13,7 @@ contract ConsumerBase is Ownable {
     // Dante cross chain contract
     CrossChain public crossChainContract;
     // Cross-chain method map
-    mapping(string => DestinationMethod) public methodMap;
+    mapping(string => DestinationChain) public destinationChainMap;
     // Cross-chain source sender map
     mapping(string => mapping(string => string)) public senderMap;
 
@@ -40,7 +40,7 @@ contract ConsumerBase is Ownable {
         string calldata _contractAddress,
         string calldata _methodName
     ) external onlyOwner {
-        DestinationMethod storage method = methodMap[_toChain];
+        DestinationChain storage method = destinationChainMap[_toChain];
         method.contractAddress = _contractAddress;
         method.methodName = _methodName;
         method.used = true;
