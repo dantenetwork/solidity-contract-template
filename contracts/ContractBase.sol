@@ -12,10 +12,10 @@ contract ConsumerBase is Ownable {
 
     // Dante cross chain contract
     CrossChain public crossChainContract;
-    // Cross-chain method map
+    // Cross-chain destination chain map
     mapping(string => DestinationChain) public destinationChainMap;
-    // Cross-chain source sender map
-    mapping(string => mapping(string => string)) public senderMap;
+    // Cross-chain source chain map
+    mapping(string => mapping(string => string)) public sourceChainMap;
 
     /**
      * Set cross chain contract
@@ -80,7 +80,7 @@ contract ConsumerBase is Ownable {
         string calldata _sender,
         string calldata _methodName
     ) external onlyOwner {
-        mapping(string => string) storage map = senderMap[_chainName];
+        mapping(string => string) storage map = sourceChainMap[_chainName];
         map[_methodName] = _sender;
     }
 
@@ -107,7 +107,7 @@ contract ConsumerBase is Ownable {
         string calldata _methodName,
         string calldata _sender
     ) public view virtual returns (bool) {
-        mapping(string => string) storage map = senderMap[_chainName];
+        mapping(string => string) storage map = sourceChainMap[_chainName];
         string storage sender = map[_methodName];
         require(
             keccak256(bytes(sender)) == keccak256(bytes(_sender)),
