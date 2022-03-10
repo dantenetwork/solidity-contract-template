@@ -8,7 +8,7 @@ contract Greetings is ContractBase {
     // Destination contract info
     struct DestnContract {
         string contractAddress; // destination contract address
-        string actionName; // destination contract action name
+        string funcName; // destination contract action name
         bool used;
     }
 
@@ -93,7 +93,7 @@ contract Greetings is ContractBase {
         crossChainContract.sendMessage(
             _toChain,
             destnContract.contractAddress,
-            destnContract.actionName,
+            destnContract.funcName,
             tx.origin,
             sqos,
             data
@@ -113,7 +113,7 @@ contract Greetings is ContractBase {
     ) external onlyOwner {
         DestnContract storage destnContract = destnContractMap[_toChain];
         destnContract.contractAddress = _contractAddress;
-        destnContract.actionName = _funcName;
+        destnContract.funcName = _funcName;
         destnContract.used = true;
     }
 
@@ -121,35 +121,35 @@ contract Greetings is ContractBase {
      * Authorize contracts of other chains to call the functions of this contract
      * @param _chainName - from chain name
      * @param _sender - sender of cross chain message
-     * @param _actionName - action name which allowed to be invoked
+     * @param _funcName - action name which allowed to be invoked
      */
     function registerPermittedContract(
         string calldata _chainName,
         string calldata _sender,
-        string calldata _actionName
+        string calldata _funcName
     ) external onlyOwner {
         mapping(string => string) storage map = permittedContractMap[
             _chainName
         ];
-        map[_actionName] = _sender;
+        map[_funcName] = _sender;
     }
 
     /**
      * This verify method will be invoked by the CrossChain contract automatically, ensure that only registered contract(registerSourceContract) calls are allowed
      * @param _chainName - chain name of cross chain message
-     * @param _actionName - contract action name of cross chain message
+     * @param _funcName - contract action name of cross chain message
      * @param _sender - cross chain message sender
      */
     //  Will be deprecated soon
     function verify(
         string calldata _chainName,
-        string calldata _actionName,
+        string calldata _funcName,
         string calldata _sender
     ) public view virtual returns (bool) {
         mapping(string => string) storage map = permittedContractMap[
             _chainName
         ];
-        string storage sender = map[_actionName];
+        string storage sender = map[_funcName];
         require(
             keccak256(bytes(sender)) == keccak256(bytes(_sender)),
             "Sender does not match"

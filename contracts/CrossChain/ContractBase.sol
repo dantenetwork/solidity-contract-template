@@ -29,45 +29,45 @@ contract ContractBase is Ownable {
 
     /**
      * message ABI used to encode/decode messages sent from this contract
-     * @param _funcName - contract action name
+     * @param _messageName - contract action name
      * @param _paramType - action param types
      * @param _paramName - action param name
      */
     function registerMessageABI(
-        string calldata _funcName,
+        string calldata _messageName,
         string calldata _paramType,
         string calldata _paramName
     ) external onlyOwner {
         MessageABI memory info = MessageABI(_paramType, _paramName);
-        messageABIMap[_funcName] = info;
+        messageABIMap[_messageName] = info;
     }
 
     /**
-     * Get Registered destination contract action info
-     * @param _funcName - contract action name
+     * Get Registered message ABI to encode/decode message
+     * @param _messageName - contract action name
      */
-    function getMessageABI(string calldata _funcName)
+    function getMessageABI(string calldata _messageName)
         external
         view
         returns (MessageABI memory)
     {
-        return messageABIMap[_funcName];
+        return messageABIMap[_messageName];
     }
 
     /**
      * contract ABI used to encode/decode messages sent to this contract
      * @param _funcName - contract action name
-     * @param _interface - contract action abi
+     * @param _contractABI - contract action abi
      */
     function registerContractABI(
         string calldata _funcName,
-        string calldata _interface
+        string calldata _contractABI
     ) external virtual onlyOwner {
-        contractABIMap[_funcName] = _interface;
+        contractABIMap[_funcName] = _contractABI;
     }
 
     /**
-     * Get Registered source contract action info
+     * Get Registered contract ABI to encode/decode message sent to this contract
      * @param _funcName - contract action name
      */
     function getContractABI(string calldata _funcName)
