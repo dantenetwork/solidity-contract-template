@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0 <0.9.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
+// ****to be modified****
+// use `ICrossChain`
 import "./CrossChain/CrossChain.sol";
 
 contract ConsumerBase is Ownable {
@@ -73,7 +75,7 @@ contract ConsumerBase is Ownable {
     // add get method for ABI to decode sent message
     // function get...() public {
 
-    } 
+    // } 
 
 
     ///////////////////////////////////////////////
