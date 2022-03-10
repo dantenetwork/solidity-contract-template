@@ -45,6 +45,7 @@ struct SimplifiedMessage {
     string fromChain; // source chain name
     string sender; // message sender
     string signer;
+    SQOS sqos;
     address contractAddress; // message content
     string action;
 }
