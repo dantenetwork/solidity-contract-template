@@ -60,4 +60,9 @@ interface ICrossChain {
      * @dev Returns the message with id `_id` received from chain `_chainName`.
      */
     function getReceivedMessage(string calldata _chainName, uint256 _id) view external returns (ReceivedMessage memory);
+
+    /**
+     * @dev Registers external callable interface information.
+     */
+    function registerInterface(string calldata _funcName, string calldata _interface) external;
 }
