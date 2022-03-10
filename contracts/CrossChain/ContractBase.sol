@@ -11,7 +11,7 @@ contract ContractBase is Ownable {
     }
 
     // desination contract action mapping
-    mapping(string => MessageABI) public messageABIMap;
+    mapping(bytes => MessageABI) public messageABIMap;
 
     // source contract action mapping
     mapping(string => string) public contractABIMap;
@@ -33,29 +33,40 @@ contract ContractBase is Ownable {
 
     /**
      * message ABI used to encode/decode messages sent from this contract
-     * @param _messageName - contract action name
+     * @param _destnChainName - destination chain name
+     * @param _destnContractName - destination contract name
+     * @param _funcName - destination contract function name
      * @param _paramType - action param types
      * @param _paramName - action param name
      */
     function registerMessageABI(
-        string calldata _messageName,
+        string calldata _destnChainName,
+        string calldata _destnContractName,
+        string calldata _funcName,
         string calldata _paramType,
         string calldata _paramName
     ) external onlyOwner {
         MessageABI memory info = MessageABI(_paramType, _paramName);
-        messageABIMap[_messageName] = info;
+        messageABIMap[
+            abi.encodePacked(_destnChainName, _destnContractName, _funcName)
+        ] = info;
     }
 
     /**
      * Get Registered message ABI to encode/decode message
-     * @param _messageName - contract action name
+     * @param _destnChainName - destination chain name
+     * @param _destnContractName - destination contract name
+     * @param _funcName - destination contract function name
      */
-    function getMessageABI(string calldata _messageName)
-        external
-        view
-        returns (MessageABI memory)
-    {
-        return messageABIMap[_messageName];
+    function getMessageABI(
+        string calldata _destnChainName,
+        string calldata _destnContractName,
+        string calldata _funcName
+    ) external view returns (MessageABI memory) {
+        return
+            messageABIMap[
+                abi.encodePacked(_destnChainName, _destnContractName, _funcName)
+            ];
     }
 
     ///////////////////////////////////////////////
