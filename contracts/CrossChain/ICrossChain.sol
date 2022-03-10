@@ -16,20 +16,20 @@ interface ICrossChain {
      * @dev Cross-Chain calls method `_methodName` of contract `_contractAddress`
      * on chain `_toChain`, data is `_data`.
      */
-    function sendMessage(string calldata _toChain, string calldata _contractAddress, string calldata _methodName, address _signer, SQOS calldata _sqos, bytes calldata _data) external;
+    function sendMessage(string calldata _toChain, string calldata _contractAddress, string calldata _methodName, SQOS calldata _sqos, bytes calldata _data) external;
 
     /**
      * @dev Cross-Chain receives message from chain `_fromChain`, the message will
      * be handled by method `_action` of contract `_to`, data is `_data`.
      */
-    function receiveMessage(uint256 _id, string memory _fromChain, string calldata _sender, string calldata _signer, address _to,
+    function receiveMessage(string memory _fromChain, uint256 _id, string calldata _sender, string calldata _signer, address _to,
         SQOS calldata _sqos, string calldata _action, bytes calldata _data) external;
 
     /**
      * @dev Cross-Chain abandons message from chain `_fromChain`, the message will
      * be jumped and not be executed.
      */
-    function abandonMessage(uint256 _id, string calldata _fromChain, uint256 _errorCode) external;
+    function abandonMessage(string calldata _fromChain, uint256 _id, uint256 _errorCode) external;
 
     /**
      * @dev Triggers execution of a message sent from chain `_chainName` with id `_id`.
@@ -60,7 +60,7 @@ interface ICrossChain {
      * @dev Returns the message with id `_id` received from chain `_chainName`.
      */
     function getReceivedMessage(string calldata _chainName, uint256 _id) view external returns (ReceivedMessage memory);
-
+    
     /**
      * @dev Registers external callable interface information.
      */
