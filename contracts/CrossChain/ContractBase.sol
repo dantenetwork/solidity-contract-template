@@ -63,6 +63,7 @@ contract ContractBase is Ownable {
         string calldata _funcName,
         string calldata _contractABI
     ) external virtual onlyOwner {
+        // recover
         contractABIMap[_funcName] = _contractABI;
     }
 
@@ -70,13 +71,13 @@ contract ContractBase is Ownable {
      * Get Registered contract ABI to encode/decode message sent to this contract
      * @param _funcName - contract action name
      */
-    function getContractABI(string calldata _funcName)
-        external
-        view
-        returns (string memory)
-    {
-        return contractABIMap[_funcName];
-    }
+    // function getContractABI(string calldata _funcName)
+    //     external
+    //     view
+    //     returns (string memory)
+    // {
+    //     return contractABIMap[_funcName];
+    // }
 
     // return context info
     function getContext() public view returns (SimplifiedMessage memory) {
