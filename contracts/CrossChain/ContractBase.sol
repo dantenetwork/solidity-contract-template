@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0 <0.9.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./ICrossChain.sol";
+import "./CrossChain.sol";
 
 contract ContractBase is Ownable {
     // Message ABI used to encode/decode messages sent from this contract
@@ -17,15 +17,19 @@ contract ContractBase is Ownable {
     mapping(string => string) public contractABIMap;
 
     // Dante cross chain contract
-    ICrossChain public crossChainContract;
+    CrossChain public crossChainContract;
 
     /**
      * Set cross chain contract
      * @param _address - cross chain contract address
      */
     function setCrossChainContract(address _address) public onlyOwner {
-        crossChainContract = ICrossChain(_address);
+        crossChainContract = CrossChain(_address);
     }
+
+    ///////////////////////////////////////////////
+    /////    Send messages to other chains   //////
+    ///////////////////////////////////////////////
 
     /**
      * message ABI used to encode/decode messages sent from this contract
@@ -54,6 +58,10 @@ contract ContractBase is Ownable {
         return messageABIMap[_messageName];
     }
 
+    ///////////////////////////////////////////////
+    ///    Receive messages from other chains   ///
+    ///////////////////////////////////////////////
+
     /**
      * contract ABI used to encode/decode messages sent to this contract
      * @param _funcName - contract action name
@@ -63,21 +71,8 @@ contract ContractBase is Ownable {
         string calldata _funcName,
         string calldata _contractABI
     ) external virtual onlyOwner {
-        // recover
-        contractABIMap[_funcName] = _contractABI;
+        crossChainContract.registerInterface(_funcName, _contractABI);
     }
-
-    /**
-     * Get Registered contract ABI to encode/decode message sent to this contract
-     * @param _funcName - contract action name
-     */
-    // function getContractABI(string calldata _funcName)
-    //     external
-    //     view
-    //     returns (string memory)
-    // {
-    //     return contractABIMap[_funcName];
-    // }
 
     // return context info
     function getContext() public view returns (SimplifiedMessage memory) {

@@ -100,6 +100,10 @@ contract Greetings is ContractBase {
         );
     }
 
+    ///////////////////////////////////////////////
+    /////    Send messages to other chains   //////
+    ///////////////////////////////////////////////
+
     /**
      * Register destination contract info
      * @param _toChain - destination chain name
@@ -116,6 +120,10 @@ contract Greetings is ContractBase {
         destnContract.funcName = _funcName;
         destnContract.used = true;
     }
+
+    ///////////////////////////////////////////////
+    ///    Receive messages from other chains   ///
+    ///////////////////////////////////////////////
 
     /**
      * Authorize contracts of other chains to call the functions of this contract
