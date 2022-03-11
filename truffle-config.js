@@ -44,6 +44,10 @@ module.exports = {
     avalancheFuji: {
       provider: () => new HDWalletProvider(mnemonic, `https://api.avax-test.network/ext/bc/C/rpc`),
       network_id: "*",       // Any network (default: none)
+    },
+    platonDev: {
+      provider: () => new HDWalletProvider(mnemonic, `http://35.247.155.162:6789`),
+      network_id: "*",       // Any network (default: none)
     }
   },
   // Configure your compilers
