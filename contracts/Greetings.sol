@@ -4,6 +4,8 @@ pragma solidity >=0.8.0 <0.9.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./CrossChain/ContractBase.sol";
 
+// `Greetings` is an example of multi-chain services with necessary implementations in `ContractBase`, without which the user defined contract cannot work.
+// And besides, `registerDestnContract` and `registerPermittedContract` are templete implementations make the management of some user defined informations easier.
 contract Greetings is ContractBase {
     // Destination contract info
     struct DestnContract {
