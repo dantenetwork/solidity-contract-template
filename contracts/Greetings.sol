@@ -91,7 +91,7 @@ contract Greetings is ContractBase {
         string calldata _date
     ) external {
         mapping(string => DestnContract) storage map = destnContractMap[_toChain];
-        DestnContract storage destnContract = map["sendGreeting"];
+        DestnContract storage destnContract = map["receiveGreeting"];
         require(destnContract.used, "action not registered");
 
         bytes memory data = abi.encode("Avalanche", _title, _content, _date);
@@ -172,19 +172,21 @@ contract Greetings is ContractBase {
 
     /**
      * Register destination contract info
+     * @param _funcName - function name to be called
      * @param _toChain - destination chain name
      * @param _contractAddress - destination contract address
-     * @param _funcName - contract function bane
+     * @param _contractFuncName - contract function name
      */
     function registerDestnContract(
+        string calldata _funcName,
         string calldata _toChain,
         string calldata _contractAddress,
-        string calldata _funcName
+        string calldata _contractFuncName
     ) external onlyOwner {
         mapping(string => DestnContract) storage map = destnContractMap[_toChain];
         DestnContract storage destnContract = map[_funcName];
         destnContract.contractAddress = _contractAddress;
-        destnContract.funcName = _funcName;
+        destnContract.funcName = _contractFuncName;
         destnContract.used = true;
     }
 
