@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0 <0.9.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./CrossChain.sol";
+import "./ICrossChain.sol";
 
 contract ContractBase is Ownable {
     // Message ABI used to encode/decode messages sent from this contract
@@ -17,14 +17,14 @@ contract ContractBase is Ownable {
     mapping(string => string) public contractABIMap;
 
     // Dante cross chain contract
-    CrossChain public crossChainContract;
+    ICrossChain public crossChainContract;
 
     /**
      * Set cross chain contract
      * @param _address - cross chain contract address
      */
     function setCrossChainContract(address _address) public onlyOwner {
-        crossChainContract = CrossChain(_address);
+        crossChainContract = ICrossChain(_address);
     }
 
     ///////////////////////////////////////////////

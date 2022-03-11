@@ -4,6 +4,8 @@ pragma solidity >=0.8.0 <0.9.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./CrossChain/ContractBase.sol";
 
+// `Greetings` is an example of multi-chain services with necessary implementations in `ContractBase`, without which the user defined contract cannot work.
+// And besides, `registerDestnContract` and `registerPermittedContract` are templete implementations make the management of some user defined informations easier.
 contract Greetings is ContractBase {
     // Destination contract info
     struct DestnContract {
@@ -21,13 +23,16 @@ contract Greetings is ContractBase {
     }
 
     // Cross-chain destination contract map
-    mapping(string => DestnContract) public destnContractMap;
+    mapping(string => mapping(string => DestnContract)) public destnContractMap;
 
     // Cross-chain permitted contract map
     mapping(string => mapping(string => string)) public permittedContractMap;
 
     // Store greetings
     Greeting[] public greetings;
+
+    // Outsourcing computing result
+    uint256 public ocResult;
 
     // Store context of cross chain contract
     // SimplifiedMessage public context;
@@ -85,7 +90,8 @@ contract Greetings is ContractBase {
         string calldata _content,
         string calldata _date
     ) external {
-        DestnContract storage destnContract = destnContractMap[_toChain];
+        mapping(string => DestnContract) storage map = destnContractMap[_toChain];
+        DestnContract storage destnContract = map["sendGreeting"];
         require(destnContract.used, "action not registered");
 
         bytes memory data = abi.encode("Avalanche", _title, _content, _date);
@@ -94,10 +100,70 @@ contract Greetings is ContractBase {
             _toChain,
             destnContract.contractAddress,
             destnContract.funcName,
-            tx.origin,
             sqos,
             data
         );
+    }
+
+    /**
+     * Send outsourcing computing task to other chain
+     * @param _toChain - to chain name
+     * @param _nums - nums to be accumulated
+     */
+    function sendComputeTask(string calldata _toChain, uint[] calldata _nums) external {
+        mapping(string => DestnContract) storage map = destnContractMap[_toChain];
+        DestnContract storage destnContract = map["receiveComputeTask"];
+        require(destnContract.used, "action not registered");
+
+        bytes memory data = abi.encode(_nums);
+        SQOS memory sqos = SQOS(0);
+        crossChainContract.sendMessage(
+            _toChain,
+            destnContract.contractAddress,
+            destnContract.funcName,
+            sqos,
+            data
+        );
+    }
+
+    /**
+     * Receives outsourcing computing task from other chain
+     * @param _nums - nums to be accumulated
+     */
+    function receiveComputeTask(uint[] calldata _nums) external {
+        require(
+            msg.sender == address(crossChainContract),
+            "Locker: caller is not CrossChain"
+        );
+        
+        // compute
+        uint ret = 0;
+        for (uint i = 0; i < _nums.length; i++) {
+            ret += _nums[i];
+        }
+
+        SimplifiedMessage memory context = getContext();
+
+        // send result back
+        mapping(string => DestnContract) storage map = destnContractMap[context.fromChain];
+        DestnContract storage destnContract = map["receiveComputeResult"];
+        require(destnContract.used, "action not registered");
+
+        bytes memory data = abi.encode(ret);
+        SQOS memory sqos = SQOS(0);
+        crossChainContract.sendMessage(context.fromChain, destnContract.contractAddress, destnContract.funcName, sqos, data);
+    }
+
+    /**
+     * Receives outsourcing computing result
+     * @param _result - accumulating result
+     */
+    function receiveComputeResult(uint _result) external {
+        require(
+            msg.sender == address(crossChainContract),
+            "Locker: caller is not CrossChain"
+        );
+        ocResult = _result;
     }
 
     ///////////////////////////////////////////////
@@ -115,7 +181,8 @@ contract Greetings is ContractBase {
         string calldata _contractAddress,
         string calldata _funcName
     ) external onlyOwner {
-        DestnContract storage destnContract = destnContractMap[_toChain];
+        mapping(string => DestnContract) storage map = destnContractMap[_toChain];
+        DestnContract storage destnContract = map[_funcName];
         destnContract.contractAddress = _contractAddress;
         destnContract.funcName = _funcName;
         destnContract.used = true;
