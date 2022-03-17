@@ -9,6 +9,7 @@ The basic version developed in `solidity` is currently available.
 
 ## Coming soon
 - More functions in `solidity` version;
+- The high level SDK for `cross-chain contract call` is under developing, that will bring more convenient for developers.
 - The `Near Rust-wasm` version.
 
 ## Usage
