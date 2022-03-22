@@ -24,6 +24,7 @@ struct SentMessage {
     address signer; // message signer
     SQOS sqos;
     Content content; // message content
+    uint256 response;   // > 0: responding message id, 0: not need a response, -1: needs a response
 }
 
 struct ReceivedMessage {
@@ -35,6 +36,7 @@ struct ReceivedMessage {
     address contractAddress; // message content
     string action;
     bytes data;
+    uint256 response;
     bool executed; // if message has been executed
     uint256 errorCode; // it will be 0 if no error occurs
 }
