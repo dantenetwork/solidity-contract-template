@@ -16,6 +16,11 @@ struct SQOS {
     uint8 reveal;
 }
 
+struct Response {
+    uint8 resType;  // 0: not need a response, 1: needs a response, 2: this is a response message, 
+    uint256 id;
+}
+
 struct SentMessage {
     uint256 id; // message id
     string fromChain; // source chain name
@@ -24,7 +29,7 @@ struct SentMessage {
     address signer; // message signer
     SQOS sqos;
     Content content; // message content
-    uint256 response;   // > 0: responding message id, 0: not need a response, -1: needs a response
+    Response response;   
 }
 
 struct ReceivedMessage {
@@ -36,9 +41,9 @@ struct ReceivedMessage {
     address contractAddress; // message content
     string action;
     bytes data;
-    uint256 response;
+    Response response;
     bool executed; // if message has been executed
-    uint256 errorCode; // it will be 0 if no error occurs
+    int256 errorCode; // it will be 0 if no error occurs
 }
 
 // simplify message to save gas
@@ -50,6 +55,7 @@ struct SimplifiedMessage {
     SQOS sqos;
     address contractAddress; // message content
     string action;
+    Response response;
 }
 
 struct cachedReceivedMessage {

@@ -4,26 +4,34 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./ContractBase.sol";
 
 contract ContractAdvanced is ContractBase {
+    mapping(bytes32 => string) public dataAbis;
+
     /**
      * data ABI used to decode data responded by other chain
-     * @param _dataAbi - data abi
      * @param _destnChainName - destination chain name
      * @param _destnContractName - destination contract name
      * @param _funcName - destination contract function name
+     * @param _dataAbi - data abi
      */
     function registerDataABI(
-        string calldata _dataAbi,
         string calldata _destnChainName,
         string calldata _destnContractName,
-        string calldata _funcName
+        string calldata _funcName,
+        string calldata _dataAbi
     ) external onlyOwner {
+        bytes32 hash = keccak256(abi.encodePacked(_destnChainName, _destnContractName, _funcName));
+        dataAbis[hash] = _dataAbi;
     }
 
     /**
      * Get data abi of current message
      */
-    function getDataAbi() external view returns (MessageABI memory) {
-        
+    function getDataAbi() public view returns (string memory) {
+        SimplifiedMessage memory context = getContext();
+        require(context.response.resType == 2, "It must be a response message");
+        SentMessage memory message = crossChainContract.getSentMessage(context.fromChain, context.response.id);
+        bytes32 hash = keccak256(abi.encodePacked(message.toChain, message.content.contractAddress, message.content.action));
+        return dataAbis[hash];
     }
 
     /**
@@ -36,7 +44,7 @@ contract ContractAdvanced is ContractBase {
      */
     function crossChainCall(string calldata _destnChainName, string calldata _destnContractName,
         string calldata _funcName, SQOS calldata _sqos, bytes calldata _data) internal {
-        crossChainContract.sendMessage(_destnChainName, _destnContractName, _funcName, _sqos, _data);
+        crossChainContract.sendMessage(_destnChainName, _destnContractName, _funcName, _sqos, _data, Response(1, 0));
     }
 
     /**
@@ -49,7 +57,8 @@ contract ContractAdvanced is ContractBase {
      */
     function crossChainRespond(string calldata _destnChainName, string calldata _destnContractName,
         string calldata _funcName, SQOS calldata _sqos, bytes calldata _data) internal {
-        crossChainContract.sendMessage(_destnChainName, _destnContractName, _funcName, _sqos, _data);
+        SimplifiedMessage memory context = getContext();
+        crossChainContract.sendMessage(_destnChainName, _destnContractName, _funcName, _sqos, _data, Response(2, context.id));
     }
 
     /**
@@ -57,7 +66,7 @@ contract ContractAdvanced is ContractBase {
      * @param _data - callback data
      */
     function crossChainCallback(
-        bytes _data
+        bytes calldata _data
     ) virtual external {
         
     }
