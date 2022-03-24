@@ -42,8 +42,8 @@ contract ContractAdvanced is ContractBase {
      * @param _sqos - security parameters
      * @param _data - cross chain data
      */
-    function crossChainCall(string calldata _destnChainName, string calldata _destnContractName,
-        string calldata _funcName, SQOS calldata _sqos, bytes calldata _data) internal {
+    function crossChainCall(string memory _destnChainName, string memory _destnContractName,
+        string memory _funcName, SQOS memory _sqos, bytes memory _data) internal {
         crossChainContract.sendMessage(_destnChainName, _destnContractName, _funcName, _sqos, _data, Response(1, 0));
     }
 
@@ -55,8 +55,8 @@ contract ContractAdvanced is ContractBase {
      * @param _sqos - security parameters
      * @param _data - cross chain data
      */
-    function crossChainRespond(string calldata _destnChainName, string calldata _destnContractName,
-        string calldata _funcName, SQOS calldata _sqos, bytes calldata _data) internal {
+    function crossChainRespond(string memory _destnChainName, string memory _destnContractName,
+        string memory _funcName, SQOS memory _sqos, bytes memory _data) internal {
         SimplifiedMessage memory context = getContext();
         crossChainContract.sendMessage(_destnChainName, _destnContractName, _funcName, _sqos, _data, Response(2, context.id));
     }
@@ -67,7 +67,10 @@ contract ContractAdvanced is ContractBase {
      */
     function crossChainCallback(
         bytes calldata _data
-    ) virtual external {
-        
+    ) virtual public {
+        require(
+            msg.sender == address(crossChainContract),
+            "ContractAdvanced: caller is not CrossChain"
+        );
     }
 }

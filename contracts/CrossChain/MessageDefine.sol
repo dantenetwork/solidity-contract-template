@@ -43,7 +43,7 @@ struct ReceivedMessage {
     bytes data;
     Response response;
     bool executed; // if message has been executed
-    int256 errorCode; // it will be 0 if no error occurs
+    uint256 errorCode; // it will be 0 if no error occurs
 }
 
 // simplify message to save gas

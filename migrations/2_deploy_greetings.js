@@ -1,4 +1,4 @@
-const Greetings = artifacts.require("Greetings");
+const Greetings = artifacts.require("GreetingAdvanced");
 const fs = require("fs");
 
 module.exports = async function (deployer) {
