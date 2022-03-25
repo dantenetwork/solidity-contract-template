@@ -66,22 +66,16 @@ contract GreetingAdvanced is ContractAdvanced {
         SimplifiedMessage memory context = getContext();
 
         // send result back
-        mapping(string => DestnContract) storage map = destnContractMap[context.fromChain];
-        DestnContract storage destnContract = map["crossChainCallback"];
-        require(destnContract.used, "action not registered");
-
         bytes memory data = abi.encode(ret);
         SQOS memory sqos = SQOS(0);
-        crossChainRespond(context.fromChain, destnContract.contractAddress, destnContract.funcName, sqos, data);
+        crossChainRespond(context.fromChain, context.sender, "callback", sqos, data);
     }
 
     /**
      * Receives outsourcing computing result
-     * @param _data - accumulating result
+     * @param _result - accumulating result
      */
-    function crossChainCallback(bytes calldata _data) override public {
-        super.crossChainCallback(_data);
-        (uint _result) = abi.decode(_data, (uint));
+    function receiveComputeResult(uint _result) public {
         ocResult = _result;
     }
 
@@ -142,14 +136,14 @@ contract GreetingAdvanced is ContractAdvanced {
         string calldata _funcName,
         string calldata _sender
     ) public view virtual returns (bool) {
-        mapping(string => string) storage map = permittedContractMap[
-            _chainName
-        ];
-        string storage sender = map[_funcName];
-        require(
-            keccak256(bytes(sender)) == keccak256(bytes(_sender)),
-            "Sender does not match"
-        );
+        // mapping(string => string) storage map = permittedContractMap[
+        //     _chainName
+        // ];
+        // string storage sender = map[_funcName];
+        // require(
+        //     keccak256(bytes(sender)) == keccak256(bytes(_sender)),
+        //     "Sender does not match"
+        // );
         return true;
     }
 }
