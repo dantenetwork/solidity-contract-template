@@ -3,10 +3,10 @@ pragma solidity >=0.8.0 <0.9.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./CrossChain/ContractAdvanced.sol";
+import "./IOCComputing.sol";
 
-// `Greetings` is an example of multi-chain services with necessary implementations in `ContractBase`, without which the user defined contract cannot work.
-// And besides, `registerDestnContract` and `registerPermittedContract` are templete implementations make the management of some user defined informations easier.
-contract GreetingAdvanced is ContractAdvanced {
+// `OCComputing` is an example of multi-chain services with necessary implementations in `ContractAdvanced`, which provides basic cross-chain call interfaces.
+contract OCComputing is ContractAdvanced, IOCComputing {
     // Destination contract info
     struct DestnContract {
         string contractAddress; // destination contract address
@@ -63,19 +63,16 @@ contract GreetingAdvanced is ContractAdvanced {
             ret += _nums[i];
         }
 
-        SimplifiedMessage memory context = getContext();
-
         // send result back
         bytes memory data = abi.encode(ret);
         SQOS memory sqos = SQOS(0);
-        crossChainRespond(context.fromChain, context.sender, "callback", sqos, data);
+        crossChainRespond("receiveComputeTaskCallback", sqos, data);
     }
 
     /**
-     * Receives outsourcing computing result
-     * @param _result - accumulating result
+     * See IOCComputing
      */
-    function receiveComputeResult(uint _result) public {
+    function receiveComputeTaskCallback(uint _result) external override {
         ocResult = _result;
     }
 
@@ -136,14 +133,14 @@ contract GreetingAdvanced is ContractAdvanced {
         string calldata _funcName,
         string calldata _sender
     ) public view virtual returns (bool) {
-        // mapping(string => string) storage map = permittedContractMap[
-        //     _chainName
-        // ];
-        // string storage sender = map[_funcName];
-        // require(
-        //     keccak256(bytes(sender)) == keccak256(bytes(_sender)),
-        //     "Sender does not match"
-        // );
+        mapping(string => string) storage map = permittedContractMap[
+            _chainName
+        ];
+        string storage sender = map[_funcName];
+        require(
+            keccak256(bytes(sender)) == keccak256(bytes(_sender)),
+            "Sender does not match"
+        );
         return true;
     }
 }

@@ -23,6 +23,10 @@ contract ContractAdvanced is ContractBase {
         callbackAbis[hash] = _callbackAbi;
     }
 
+    ///////////////////////////////////////////////
+    /////  Cross-chain call to other chains  //////
+    ///////////////////////////////////////////////
+
     /**
      * Cross chain call
      * @param _destnChainName - destination chain name
@@ -36,17 +40,18 @@ contract ContractAdvanced is ContractBase {
         crossChainContract.sendMessage(_destnChainName, _destnContractName, _funcName, _sqos, _data, Response(1, 0));
     }
 
+    ///////////////////////////////////////////////
+    ///// Cross-chain respond to other chains//////
+    ///////////////////////////////////////////////
+
     /**
      * Cross chain respond
-     * @param _destnChainName - destination chain name
-     * @param _destnContractName - destination contract name
      * @param _funcName - destination contract function name
      * @param _sqos - security parameters
      * @param _data - cross chain data
      */
-    function crossChainRespond(string memory _destnChainName, string memory _destnContractName,
-        string memory _funcName, SQOS memory _sqos, bytes memory _data) internal {
+    function crossChainRespond(string memory _funcName, SQOS memory _sqos, bytes memory _data) internal {
         SimplifiedMessage memory context = getContext();
-        crossChainContract.sendMessage(_destnChainName, _destnContractName, _funcName, _sqos, _data, Response(2, context.id));
+        crossChainContract.sendMessage(context.fromChain, context.sender, _funcName, _sqos, _data, Response(2, context.id));
     }
 }
