@@ -34,7 +34,7 @@ interface ICrossChain {
     /**
      * @dev Triggers execution of a message sent from chain `_chainName` with id `_id`.
      */
-    function executeMessage(string calldata _chainName, uint256 _id) external;
+    function executeMessage(string calldata _chainName, uint256 _id) external returns (uint8, string memory);
 
     /**
      * @dev Returns the simplified message, this message is reset every time a third-party contract is called
@@ -60,7 +60,7 @@ interface ICrossChain {
      * @dev Returns the message with id `_id` received from chain `_chainName`.
      */
     function getReceivedMessage(string calldata _chainName, uint256 _id) view external returns (ReceivedMessage memory);
-    
+
     /**
      * @dev Registers external callable interface information.
      */
