@@ -39,16 +39,10 @@ contract Greetings is ContractBase {
 
     /**
      * Receive greeting info from other chains
-     * @param _fromChain - from chain name
-     * @param _title - greeting title
-     * @param _content - greeting content
-     * @param _date - date
+     * @param _greeting - greeting sent from other chain
      */
     function receiveGreeting(
-        string calldata _fromChain,
-        string calldata _title,
-        string calldata _content,
-        string calldata _date
+        Greeting calldata _greeting
     ) public {
         require(
             msg.sender == address(crossChainContract),
@@ -70,31 +64,23 @@ contract Greetings is ContractBase {
             "message sender is not registered!"
         );
 
-        Greeting storage g = greetings.push();
-        g.fromChain = _fromChain;
-        g.title = _title;
-        g.content = _content;
-        g.date = _date;
+        greetings.push(_greeting);
     }
 
     /**
      * Send greeting info to other chains
      * @param _toChain - to chain name
-     * @param _title - greeting title
-     * @param _content - greeting content
-     * @param _date - date
+     * @param _greeting - greeting sent to other chain
      */
     function sendGreeting(
         string calldata _toChain,
-        string calldata _title,
-        string calldata _content,
-        string calldata _date
+        Greeting calldata _greeting
     ) external {
         mapping(string => DestnContract) storage map = destnContractMap[_toChain];
         DestnContract storage destnContract = map["receiveGreeting"];
         require(destnContract.used, "action not registered");
 
-        bytes memory data = abi.encode("Avalanche", _title, _content, _date);
+        bytes memory data = abi.encode(_greeting);
         SQOS memory sqos = SQOS(1);
         crossChainContract.sendMessage(
             _toChain,
