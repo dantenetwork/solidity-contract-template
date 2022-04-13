@@ -2,24 +2,16 @@
 pragma solidity >=0.8.0 <0.9.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./CrossChain/ContractBase.sol";
+import "./CrossChain/ContractAdvanced.sol";
+import "./IOCComputing.sol";
 
-// `Greetings` is an example of multi-chain services with necessary implementations in `ContractBase`, without which the user defined contract cannot work.
-// And besides, `registerDestnContract` and `registerPermittedContract` are templete implementations make the management of some user defined informations easier.
-contract Greetings is ContractBase {
+// `OCComputing` is an example of multi-chain services with necessary implementations in `ContractAdvanced`, which provides basic cross-chain call interfaces.
+contract OCComputing is ContractAdvanced, IOCComputing {
     // Destination contract info
     struct DestnContract {
         string contractAddress; // destination contract address
         string funcName; // destination contract action name
         bool used;
-    }
-
-    // greeting
-    struct Greeting {
-        string fromChain;
-        string title;
-        string content;
-        string date;
     }
 
     // Cross-chain destination contract map
@@ -28,70 +20,12 @@ contract Greetings is ContractBase {
     // Cross-chain permitted contract map
     mapping(string => mapping(string => string)) public permittedContractMap;
 
-    // Store greetings
-    Greeting[] public greetings;
-
     // Outsourcing computing result
     uint256 public ocResult;
 
     // Store context of cross chain contract
     // SimplifiedMessage public context;
-
-    /**
-     * Receive greeting info from other chains
-     * @param _greeting - greeting sent from other chain
-     */
-    function receiveGreeting(
-        Greeting calldata _greeting
-    ) public {
-        require(
-            msg.sender == address(crossChainContract),
-            "Locker: caller is not CrossChain"
-        );
-
-        // `context` used for verify the operation authority
-        SimplifiedMessage memory context = getContext();
-        // verify sqos
-        require(context.sqos.reveal == 1, "SQoS invalid!");
-
-        // verify the sender from the registered chain
-        mapping(string => string)
-            storage permittedContract = permittedContractMap[context.fromChain];
-
-        require(
-            keccak256(bytes(permittedContract[context.action])) ==
-                keccak256(bytes(context.sender)),
-            "message sender is not registered!"
-        );
-
-        greetings.push(_greeting);
-    }
-
-    /**
-     * Send greeting info to other chains
-     * @param _toChain - to chain name
-     * @param _greeting - greeting sent to other chain
-     */
-    function sendGreeting(
-        string calldata _toChain,
-        Greeting calldata _greeting
-    ) external {
-        mapping(string => DestnContract) storage map = destnContractMap[_toChain];
-        DestnContract storage destnContract = map["receiveGreeting"];
-        require(destnContract.used, "action not registered");
-
-        bytes memory data = abi.encode(_greeting);
-        SQOS memory sqos = SQOS(1);
-        crossChainContract.sendMessage(
-            _toChain,
-            destnContract.contractAddress,
-            destnContract.funcName,
-            sqos,
-            data,
-            Response(0, 0)
-        );
-    }
-
+    
     /**
      * Send outsourcing computing task to other chain
      * @param _toChain - to chain name
@@ -104,13 +38,12 @@ contract Greetings is ContractBase {
 
         bytes memory data = abi.encode(_nums);
         SQOS memory sqos = SQOS(0);
-        crossChainContract.sendMessage(
+        crossChainCall(
             _toChain,
             destnContract.contractAddress,
             destnContract.funcName,
             sqos,
-            data,
-            Response(0, 0)
+            data
         );
     }
 
@@ -130,27 +63,16 @@ contract Greetings is ContractBase {
             ret += _nums[i];
         }
 
-        SimplifiedMessage memory context = getContext();
-
         // send result back
-        mapping(string => DestnContract) storage map = destnContractMap[context.fromChain];
-        DestnContract storage destnContract = map["receiveComputeResult"];
-        require(destnContract.used, "action not registered");
-
         bytes memory data = abi.encode(ret);
         SQOS memory sqos = SQOS(0);
-        crossChainContract.sendMessage(context.fromChain, destnContract.contractAddress, destnContract.funcName, sqos, data, Response(0, 0));
+        crossChainRespond("receiveComputeTaskCallback", sqos, data);
     }
 
     /**
-     * Receives outsourcing computing result
-     * @param _result - accumulating result
+     * See IOCComputing
      */
-    function receiveComputeResult(uint _result) external {
-        require(
-            msg.sender == address(crossChainContract),
-            "Locker: caller is not CrossChain"
-        );
+    function receiveComputeTaskCallback(uint _result) external override {
         ocResult = _result;
     }
 

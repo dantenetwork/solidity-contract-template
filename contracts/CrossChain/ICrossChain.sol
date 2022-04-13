@@ -16,7 +16,8 @@ interface ICrossChain {
      * @dev Cross-Chain calls method `_methodName` of contract `_contractAddress`
      * on chain `_toChain`, data is `_data`.
      */
-    function sendMessage(string calldata _toChain, string calldata _contractAddress, string calldata _methodName, SQOS calldata _sqos, bytes calldata _data) external;
+    function sendMessage(string calldata _toChain, string calldata _contractAddress,
+        string calldata _methodName, SQOS calldata _sqos, bytes calldata _data, Response calldata _response) external;
 
     /**
      * @dev Cross-Chain receives message from chain `_fromChain`, the message will
