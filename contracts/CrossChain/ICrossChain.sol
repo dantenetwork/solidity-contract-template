@@ -34,7 +34,7 @@ interface ICrossChain {
     /**
      * @dev Triggers execution of a message sent from chain `_chainName` with id `_id`.
      */
-    function executeMessage(string calldata _chainName, uint256 _id) external returns (uint8, string memory);
+    function executeMessage(string calldata _chainName, uint256 _id) external;
 
     /**
      * @dev Returns the simplified message, this message is reset every time a third-party contract is called
