@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0 <0.9.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./ICrossChain.sol";
+import "@hthuang/contracts/interfaces/ICrossChain.sol";
 
 contract ContractBase is Ownable {
     // Message ABI used to encode/decode messages sent from this contract
