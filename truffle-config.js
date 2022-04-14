@@ -45,6 +45,10 @@ module.exports = {
       provider: () => new HDWalletProvider(mnemonic, `https://api.avax-test.network/ext/bc/C/rpc`),
       network_id: "*",       // Any network (default: none)
     },
+    rinkeby: {
+      provider: () => new HDWalletProvider(mnemonic, `https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161`),
+      network_id: "*",       // Any network (default: none)
+    },
     platonDev: {
       provider: () => new HDWalletProvider(mnemonic, `http://35.247.155.162:6789`),
       network_id: "*",       // Any network (default: none)
