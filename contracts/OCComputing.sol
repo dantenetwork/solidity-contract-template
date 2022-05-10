@@ -14,17 +14,21 @@ contract OCComputing is ContractAdvanced, IOCComputing {
         bool used;
     }
 
+    struct OCResult {
+        bool used;
+        uint256 result;
+    }
+
     // Cross-chain destination contract map
     mapping(string => mapping(string => DestnContract)) public destnContractMap;
 
     // Cross-chain permitted contract map
     mapping(string => mapping(string => string)) public permittedContractMap;
 
+    // Outsourcing computing data cache
+    mapping(uint256 => uint256[]) cachedData;
     // Outsourcing computing result
-    uint256 public ocResult;
-
-    // Store context of cross chain contract
-    // SimplifiedMessage public context;
+    mapping(uint256 => OCResult) public ocResult;
     
     /**
      * Send outsourcing computing task to other chain
@@ -38,13 +42,14 @@ contract OCComputing is ContractAdvanced, IOCComputing {
 
         bytes memory data = abi.encode(_nums);
         SQOS memory sqos = SQOS(0);
-        crossChainCall(
+        uint id = crossChainCall(
             _toChain,
             destnContract.contractAddress,
             destnContract.funcName,
             sqos,
             data
         );
+        cachedData[id] = _nums;
     }
 
     /**
@@ -73,7 +78,9 @@ contract OCComputing is ContractAdvanced, IOCComputing {
      * See IOCComputing
      */
     function receiveComputeTaskCallback(uint _result) external override {
-        ocResult = _result;
+        SimplifiedMessage memory context = getContext();
+        ocResult[context.id].used = true;
+        ocResult[context.id].result = _result;
     }
 
     ///////////////////////////////////////////////
