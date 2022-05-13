@@ -36,8 +36,8 @@ contract ContractAdvanced is ContractBase {
      * @param _data - cross chain data
      */
     function crossChainCall(string memory _destnChainName, string memory _destnContractName,
-        string memory _funcName, SQOS memory _sqos, bytes memory _data) internal {
-        crossChainContract.sendMessage(_destnChainName, _destnContractName, _funcName, _sqos, _data, Response(1, 0));
+        string memory _funcName, SQOS memory _sqos, bytes memory _data) internal returns (uint256) {
+        return crossChainContract.sendMessage(_destnChainName, _destnContractName, _funcName, _sqos, _data, Session(1, 0));
     }
 
     ///////////////////////////////////////////////
@@ -50,8 +50,8 @@ contract ContractAdvanced is ContractBase {
      * @param _sqos - security parameters
      * @param _data - cross chain data
      */
-    function crossChainRespond(string memory _funcName, SQOS memory _sqos, bytes memory _data) internal {
+    function crossChainRespond(string memory _funcName, SQOS memory _sqos, bytes memory _data) internal returns (uint256) {
         SimplifiedMessage memory context = getContext();
-        crossChainContract.sendMessage(context.fromChain, context.sender, _funcName, _sqos, _data, Response(2, context.id));
+        return crossChainContract.sendMessage(context.fromChain, context.sender, _funcName, _sqos, _data, Session(2, context.id));
     }
 }

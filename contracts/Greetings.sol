@@ -88,7 +88,7 @@ contract Greetings is ContractBase {
             destnContract.funcName,
             sqos,
             data,
-            Response(0, 0)
+            Session(0, 0)
         );
     }
 
@@ -110,7 +110,7 @@ contract Greetings is ContractBase {
             destnContract.funcName,
             sqos,
             data,
-            Response(0, 0)
+            Session(0, 0)
         );
     }
 
@@ -139,7 +139,7 @@ contract Greetings is ContractBase {
 
         bytes memory data = abi.encode(ret);
         SQOS memory sqos = SQOS(0);
-        crossChainContract.sendMessage(context.fromChain, destnContract.contractAddress, destnContract.funcName, sqos, data, Response(0, 0));
+        crossChainContract.sendMessage(context.fromChain, destnContract.contractAddress, destnContract.funcName, sqos, data, Session(0, 0));
     }
 
     /**
