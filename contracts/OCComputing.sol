@@ -79,8 +79,9 @@ contract OCComputing is ContractAdvanced, IOCComputing {
      */
     function receiveComputeTaskCallback(uint _result) external override {
         SimplifiedMessage memory context = getContext();
-        ocResult[context.session.id].used = true;
-        ocResult[context.session.id].result = _result;
+        OCResult storage result = ocResult[context.session.id];
+        result.used = true;
+        result.result = _result;
     }
 
     ///////////////////////////////////////////////
