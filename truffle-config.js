@@ -46,7 +46,7 @@ module.exports = {
       network_id: "*",       // Any network (default: none)
     },
     platonDev: {
-      provider: () => new HDWalletProvider(mnemonic, `http://35.247.155.162:6789`),
+      provider: () => new HDWalletProvider(mnemonic, `wss://devnetopenapi2.platon.network/ws`),
       network_id: "*",       // Any network (default: none)
     },
     bscTest: {
