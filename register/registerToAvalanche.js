@@ -2,9 +2,10 @@ const Web3 = require('web3');
 const fs = require('fs');
 const avalanche = require('./avalanche');
 
-const web3 = new Web3('https://api.avax-test.network/ext/bc/C/rpc');
-const crossChainContractAddress = '0x27ED6b8E928Fb7d393EBE4C1ddBc353424a5F3ae';
-const nearGreetingContractAddress = 'greeting.near';
+// const web3 = new Web3('https://api.avax-test.network/ext/bc/C/rpc');
+const web3 = new Web3('wss://devnetopenapi2.platon.network/ws');
+const crossChainContractAddress = '0x4cd5F0963bbd6Ee2624505878b0C436C9a7d1aE3';
+const nearGreetingContractAddress = '9f9350eb575cae7aac7f85a8c62b08d94dcac70a84e3c765464ff87c669fa4e5';
 
 // Test account
 let testAccountPrivateKey = fs.readFileSync('.secret').toString();
@@ -25,22 +26,25 @@ const greetingContract = new web3.eth.Contract(greetingAbi, avalancheGreetingCon
   // greeting contract action name
   const contractActionName = 'receiveGreeting';
 
+  // greeting contract destination action name
+  const destContractActionName = 'receive_greeting';
+
   // greeting action each param type
-  const actionParamsType = 'string,string,string,string';
+  const actionParamsType = 'tuple(string,string,string,string)';
 
   // greeting action each param name
-  const actionParamsName = 'fromChain,title,content,date';
+  const actionParamsName = 'greeting';
 
   // greeting action abi (receiveGreeting)
-  const actionABI = '{"inputs":[{"name":"fromChain","type":"string"},{"name":"title","type":"string"},{"name":"content","type":"string"},{"name":"date","type":"string"}],"name":"receiveGreeting","type":"function"}';
+  const actionABI = '{"inputs":[{"components":[{"internalType":"string","name":"fromChain","type":"string"},{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"content","type":"string"},{"internalType":"string","name":"date","type":"string"}],"internalType":"struct Greetings.Greeting","name":"_greeting","type":"tuple"}],"name":"receiveGreeting","outputs":[],"stateMutability":"nonpayable","type":"function"}';
 
 
   // Set cross chain contract address
   await avalanche.sendTransaction(greetingContract, 'setCrossChainContract', testAccountPrivateKey, [crossChainContractAddress]);
 
   // Register contract info for sending messages to other chains
-  await avalanche.sendTransaction(greetingContract, 'registerDestnContract', testAccountPrivateKey, [destinationChainName, nearGreetingContractAddress, contractActionName]);
-  await avalanche.sendTransaction(greetingContract, 'registerMessageABI', testAccountPrivateKey, [destinationChainName, nearGreetingContractAddress, contractActionName, actionParamsType, actionParamsName]);
+  await avalanche.sendTransaction(greetingContract, 'registerDestnContract', testAccountPrivateKey, [contractActionName, destinationChainName, nearGreetingContractAddress, destContractActionName]);
+  await avalanche.sendTransaction(greetingContract, 'registerMessageABI', testAccountPrivateKey, [destinationChainName, nearGreetingContractAddress, destContractActionName, actionParamsType, actionParamsName]);
 
   // Register contract info for receiving messages from other chains.
   await avalanche.sendTransaction(greetingContract, 'registerPermittedContract', testAccountPrivateKey, [destinationChainName, nearGreetingContractAddress, contractActionName]);
