@@ -6,6 +6,7 @@ const avalanche = require('./avalanche');
 const web3 = new Web3('wss://devnetopenapi2.platon.network/ws');
 const crossChainContractAddress = '0x4cd5F0963bbd6Ee2624505878b0C436C9a7d1aE3';
 const nearGreetingContractAddress = '9f9350eb575cae7aac7f85a8c62b08d94dcac70a84e3c765464ff87c669fa4e5';
+const CHAIN_ID = 2203181;
 
 // Test account
 let testAccountPrivateKey = fs.readFileSync('.secret').toString();
@@ -40,13 +41,12 @@ const greetingContract = new web3.eth.Contract(greetingAbi, avalancheGreetingCon
 
 
   // Set cross chain contract address
-  await avalanche.sendTransaction(greetingContract, 'setCrossChainContract', testAccountPrivateKey, [crossChainContractAddress]);
-
+  await avalanche.sendTransaction(web3, CHAIN_ID, greetingContract, 'setCrossChainContract', testAccountPrivateKey, [crossChainContractAddress]);
   // Register contract info for sending messages to other chains
-  await avalanche.sendTransaction(greetingContract, 'registerDestnContract', testAccountPrivateKey, [contractActionName, destinationChainName, nearGreetingContractAddress, destContractActionName]);
-  await avalanche.sendTransaction(greetingContract, 'registerMessageABI', testAccountPrivateKey, [destinationChainName, nearGreetingContractAddress, destContractActionName, actionParamsType, actionParamsName]);
+  await avalanche.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerDestnContract', testAccountPrivateKey, [contractActionName, destinationChainName, nearGreetingContractAddress, destContractActionName]);
+  await avalanche.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerMessageABI', testAccountPrivateKey, [destinationChainName, nearGreetingContractAddress, destContractActionName, actionParamsType, actionParamsName]);
 
   // Register contract info for receiving messages from other chains.
-  await avalanche.sendTransaction(greetingContract, 'registerPermittedContract', testAccountPrivateKey, [destinationChainName, nearGreetingContractAddress, contractActionName]);
-  await avalanche.sendTransaction(greetingContract, 'registerContractABI', testAccountPrivateKey, [contractActionName, actionABI]);
+  await avalanche.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerPermittedContract', testAccountPrivateKey, [destinationChainName, nearGreetingContractAddress, contractActionName]);
+  await avalanche.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerContractABI', testAccountPrivateKey, [contractActionName, actionABI]);
 }());
