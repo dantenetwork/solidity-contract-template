@@ -1,6 +1,6 @@
 const Web3 = require('web3');
 const fs = require('fs');
-const avalanche = require('./avalanche');
+const ethereum = require('./ethereum');
 
 // const web3 = new Web3('https://api.avax-test.network/ext/bc/C/rpc');
 const web3 = new Web3('wss://devnetopenapi2.platon.network/ws');
@@ -13,12 +13,12 @@ let testAccountPrivateKey = fs.readFileSync('.secret').toString();
 
 // Greeting smart contract address
 const address = fs.readFileSync('./build/address.json');
-const avalancheGreetingContractAddress = JSON.parse(address).greetingsContractAddress;
+const greetingContractAddress = JSON.parse(address).greetingsContractAddress;
 
 // Load contract abi, and init greeting contract object
 const greetingRawData = fs.readFileSync('./build/contracts/Greetings.json');
 const greetingAbi = JSON.parse(greetingRawData).abi;
-const greetingContract = new web3.eth.Contract(greetingAbi, avalancheGreetingContractAddress);
+const greetingContract = new web3.eth.Contract(greetingAbi, greetingContractAddress);
 
 (async function init() {
   // destination chain name
@@ -39,14 +39,22 @@ const greetingContract = new web3.eth.Contract(greetingAbi, avalancheGreetingCon
   // greeting action abi (receiveGreeting)
   const actionABI = '{"inputs":[{"components":[{"internalType":"string","name":"fromChain","type":"string"},{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"content","type":"string"},{"internalType":"string","name":"date","type":"string"}],"internalType":"struct Greetings.Greeting","name":"greeting","type":"tuple"}],"name":"receiveGreeting","outputs":[],"stateMutability":"nonpayable","type":"function"}';
 
+  // Get current date
+  function getCurrentDate() {
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0');
+    var yyyy = today.getFullYear();
+    return yyyy + '-' + mm + '-' + dd;
+  }
 
   // Set cross chain contract address
-  await avalanche.sendTransaction(web3, CHAIN_ID, greetingContract, 'setCrossChainContract', testAccountPrivateKey, [crossChainContractAddress]);
+  await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'setCrossChainContract', testAccountPrivateKey, [crossChainContractAddress]);
   // Register contract info for sending messages to other chains
-  await avalanche.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerDestnContract', testAccountPrivateKey, [contractActionName, destinationChainName, nearGreetingContractAddress, destContractActionName]);
-  await avalanche.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerMessageABI', testAccountPrivateKey, [destinationChainName, nearGreetingContractAddress, destContractActionName, actionParamsType, actionParamsName]);
+  await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerDestnContract', testAccountPrivateKey, [contractActionName, destinationChainName, nearGreetingContractAddress, destContractActionName]);
+  await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerMessageABI', testAccountPrivateKey, [destinationChainName, nearGreetingContractAddress, destContractActionName, actionParamsType, actionParamsName]);
 
   // Register contract info for receiving messages from other chains.
-  await avalanche.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerPermittedContract', testAccountPrivateKey, [destinationChainName, nearGreetingContractAddress, contractActionName]);
-  await avalanche.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerContractABI', testAccountPrivateKey, [contractActionName, actionABI]);
+  await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerPermittedContract', testAccountPrivateKey, [destinationChainName, nearGreetingContractAddress, contractActionName]);
+  await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerContractABI', testAccountPrivateKey, [contractActionName, actionABI]);
 }());
