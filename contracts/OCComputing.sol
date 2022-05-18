@@ -69,9 +69,14 @@ contract OCComputing is ContractAdvanced, IOCComputing {
         }
 
         // send result back
+        SimplifiedMessage memory context = getContext();
+        mapping(string => DestnContract) storage map = destnContractMap[context.fromChain];
+        DestnContract storage destnContract = map["receiveComputeTaskCallback"];
+        require(destnContract.used, "action not registered");
+
         bytes memory data = abi.encode(ret);
         SQOS memory sqos = SQOS(0);
-        crossChainRespond("receiveComputeTaskCallback", sqos, data);
+        crossChainRespond(destnContract.funcName, sqos, data);
     }
 
     /**
