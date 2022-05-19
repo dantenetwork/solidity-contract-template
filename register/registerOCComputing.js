@@ -3,10 +3,11 @@ const fs = require('fs');
 const ethereum = require('./ethereum');
 
 // const web3 = new Web3('https://api.avax-test.network/ext/bc/C/rpc');
-const web3 = new Web3('wss://devnetopenapi2.platon.network/ws');
-const crossChainContractAddress = '0x4cd5F0963bbd6Ee2624505878b0C436C9a7d1aE3';
+// const web3 = new Web3('wss://devnetopenapi2.platon.network/ws');
+const web3 = new Web3('https://data-seed-prebsc-1-s1.binance.org:8545');
+const crossChainContractAddress = '0x63819128fFb3F84BB2C7B2e41875332ec9D66376';
 const nearOCContractAddress = 'a7d1736372266477e0d0295d34ae47622ba50d007031a009976348f954e681fe';
-const CHAIN_ID = 2203181;
+const CHAIN_ID = 97;
 
 // Test account
 let testAccountPrivateKey = fs.readFileSync('.secret').toString();

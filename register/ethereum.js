@@ -12,8 +12,9 @@ module.exports = {
       const data = targetContract.methods[methodName]
         .apply(targetContract.methods, arguments)
         .encodeABI();  // encode ABI
-      const gas = provider.utils.numberToHex(
-        parseInt((await provider.eth.getBlock('latest')).gasLimit - 1));
+      // const gas = provider.utils.numberToHex(
+      //   parseInt((await provider.eth.getBlock('latest')).gasLimit - 1));
+      const gas = 1000000;
       let gasPrice = await provider.eth.getGasPrice();
       gasPrice = 50000000000;
 
