@@ -3,11 +3,12 @@ const fs = require('fs');
 const ethereum = require('./ethereum');
 
 // const web3 = new Web3('https://api.avax-test.network/ext/bc/C/rpc');
-// const web3 = new Web3('wss://devnetopenapi2.platon.network/ws');
-const web3 = new Web3('https://data-seed-prebsc-1-s1.binance.org:8545');
-const crossChainContractAddress = '0x63819128fFb3F84BB2C7B2e41875332ec9D66376';
+const web3 = new Web3('wss://devnetopenapi2.platon.network/ws');
+// const web3 = new Web3('https://data-seed-prebsc-1-s1.binance.org:8545');
+const crossChainContractAddress = '0xb43a34f4F83e9F8ce67EeD4951e2b7e5af4BdcaA';
 const nearGreetingContractAddress = '9f9350eb575cae7aac7f85a8c62b08d94dcac70a84e3c765464ff87c669fa4e5';
-const CHAIN_ID = 97;
+const polkadotGreetingContractAddress = '5CLehtwAzVFCsppNW8YpX4bWaCDBaNmiQ8RBf98Y8StyZCHD';
+const CHAIN_ID = 2203181;
 
 // Test account
 let testAccountPrivateKey = fs.readFileSync('.secret').toString();
@@ -23,7 +24,7 @@ const greetingContract = new web3.eth.Contract(greetingAbi, greetingContractAddr
 
 (async function init() {
   // destination chain name
-  const destinationChainName = 'NEAR';
+  const destinationChainName = 'POLKADOT';
 
   // greeting contract action name
   const contractActionName = 'receiveGreeting';
@@ -49,13 +50,16 @@ const greetingContract = new web3.eth.Contract(greetingAbi, greetingContractAddr
     return yyyy + '-' + mm + '-' + dd;
   }
 
-  // Set cross chain contract address
-  await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'setCrossChainContract', testAccountPrivateKey, [crossChainContractAddress]);
-  // Register contract info for sending messages to other chains
-  await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerDestnContract', testAccountPrivateKey, [contractActionName, destinationChainName, nearGreetingContractAddress, destContractActionName]);
-  await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerMessageABI', testAccountPrivateKey, [destinationChainName, nearGreetingContractAddress, destContractActionName, actionParamsType, actionParamsName]);
+  // // Set cross chain contract address
+  // await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'setCrossChainContract', testAccountPrivateKey, [crossChainContractAddress]);
+  // // Register contract info for sending messages to other chains
+  // await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerDestnContract', testAccountPrivateKey, [contractActionName, destinationChainName, polkadotGreetingContractAddress, destContractActionName]);
+  // await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerMessageABI', testAccountPrivateKey, [destinationChainName, polkadotGreetingContractAddress, destContractActionName, actionParamsType, actionParamsName]);
 
-  // Register contract info for receiving messages from other chains.
-  await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerPermittedContract', testAccountPrivateKey, [destinationChainName, nearGreetingContractAddress, contractActionName]);
-  await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerContractABI', testAccountPrivateKey, [contractActionName, actionABI]);
+  // // Register contract info for receiving messages from other chains.
+  // await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerPermittedContract', testAccountPrivateKey, [destinationChainName, polkadotGreetingContractAddress, contractActionName]);
+  // await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerContractABI', testAccountPrivateKey, [contractActionName, actionABI]);
+  await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'sendGreeting', testAccountPrivateKey, [destinationChainName, ['POLKADOT', 'Greetings', 'Greeting from POLKADOT', getCurrentDate()]]);
+  // let a = await ethereum.contractCall(greetingContract, 'crossChainContract', []);
+  // console.log(a)
 }());
