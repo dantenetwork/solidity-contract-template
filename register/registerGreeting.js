@@ -7,7 +7,7 @@ const web3 = new Web3('wss://devnetopenapi2.platon.network/ws');
 // const web3 = new Web3('https://data-seed-prebsc-1-s1.binance.org:8545');
 const crossChainContractAddress = '0xb43a34f4F83e9F8ce67EeD4951e2b7e5af4BdcaA';
 const nearGreetingContractAddress = '9f9350eb575cae7aac7f85a8c62b08d94dcac70a84e3c765464ff87c669fa4e5';
-const polkadotGreetingContractAddress = '5CLehtwAzVFCsppNW8YpX4bWaCDBaNmiQ8RBf98Y8StyZCHD';
+const polkadotGreetingContractAddress = '5DeiQFwpYh7cJ5Rx5pnHgHHWPBbgq4qkyf3Q8G9CE6ZvEFLu';
 const CHAIN_ID = 2203181;
 
 // Test account
@@ -30,7 +30,7 @@ const greetingContract = new web3.eth.Contract(greetingAbi, greetingContractAddr
   const contractActionName = 'receiveGreeting';
 
   // greeting contract destination action name
-  const destContractActionName = 'receive_greeting';
+  const destContractActionName = '0x3a6e9696';
 
   // greeting action each param type
   const actionParamsType = 'tuple(string,string,string,string)';
