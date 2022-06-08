@@ -20,6 +20,7 @@ contract Greetings is ContractBase {
         string title;
         string content;
         string date;
+        string extra;
     }
 
     // Cross-chain destination contract map
