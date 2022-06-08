@@ -6,7 +6,7 @@ const web3 = new Web3('https://api.avax-test.network/ext/bc/C/rpc');
 // const web3 = new Web3('wss://devnetopenapi2.platon.network/ws');
 // const web3 = new Web3('https://data-seed-prebsc-1-s1.binance.org:8545');
 const crossChainContractAddress = '0xc17a00D5e657fd8E5766A4E1C13599ea4d31E563';
-const destGreetingContractAddress = '0x533db5453F0fc9791f08d052EE1903BE45b1A07d';
+const destGreetingContractAddress = '0xa2A457Aa88EfB2Ac1269A0d7f0440675CDA0140B';
 const CHAIN_ID = 43113;
 
 // Test account
@@ -38,7 +38,7 @@ const greetingContract = new web3.eth.Contract(greetingAbi, greetingContractAddr
   const actionParamsName = 'greeting';
 
   // greeting action abi (receiveGreeting)
-  const actionABI = '{"inputs":[{"components":[{"internalType":"string","name":"fromChain","type":"string"},{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"content","type":"string"},{"internalType":"string","name":"date","type":"string"},{"internalType":"string","name":"extra","type":"string"}],"internalType":"struct Greetings.Greeting","name":"_greeting","type":"tuple"}],"name":"receiveGreeting","outputs":[],"stateMutability":"nonpayable","type":"function"}';
+  const actionABI = '{"inputs":[{"components":[{"internalType":"string","name":"fromChain","type":"string"},{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"content","type":"string"},{"internalType":"string","name":"date","type":"string"},{"internalType":"string","name":"extra","type":"string"}],"internalType":"struct Greetings.Greeting","name":"greeting","type":"tuple"}],"name":"receiveGreeting","outputs":[],"stateMutability":"nonpayable","type":"function"}';
 
   // Get current date
   function getCurrentDate() {
