@@ -30,7 +30,7 @@ contract Greetings is ContractBase {
     mapping(string => mapping(string => string)) public permittedContractMap;
 
     // Store greetings
-    Greeting[] public greetings;
+    mapping(uint256 => Greeting) public greetings;
 
     // Outsourcing computing result
     uint256 public ocResult;
@@ -65,7 +65,7 @@ contract Greetings is ContractBase {
             "message sender is not registered!"
         );
 
-        greetings.push(_greeting);
+        greetings[context.id] = _greeting;
     }
 
     /**
