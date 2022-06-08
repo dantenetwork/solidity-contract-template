@@ -7,7 +7,7 @@ const web3 = new Web3('wss://devnetopenapi2.platon.network/ws');
 // const web3 = new Web3('https://data-seed-prebsc-1-s1.binance.org:8545');
 const crossChainContractAddress = '0xb43a34f4F83e9F8ce67EeD4951e2b7e5af4BdcaA';
 const nearGreetingContractAddress = '9f9350eb575cae7aac7f85a8c62b08d94dcac70a84e3c765464ff87c669fa4e5';
-const polkadotGreetingContractAddress = '5GHt2aa7EgG1VHz4a79ccPJpUoZ8L36upya8ZaehRGrNA2pf';
+const polkadotGreetingContractAddress = '5FnjHH1dxXGh5ZiCkKqdqk1deBZmTotseAPb4rFpdw84JwcD';
 const CHAIN_ID = 2203181;
 
 // Test account
@@ -59,10 +59,10 @@ const greetingContract = new web3.eth.Contract(greetingAbi, greetingContractAddr
   // Register contract info for receiving messages from other chains.
   // await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerPermittedContract', testAccountPrivateKey, [destinationChainName, polkadotGreetingContractAddress, contractActionName]);
   // await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerContractABI', testAccountPrivateKey, [contractActionName, actionABI]);
-  // await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'sendGreeting', testAccountPrivateKey, [destinationChainName, [destinationChainName, 'Greetings', 'Greeting from POLKADOT', getCurrentDate()]]);
-  let a = await ethereum.contractCall(greetingContract, 'greetings', [3]);
+  await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'sendGreeting', testAccountPrivateKey, [destinationChainName, [destinationChainName, 'Greetings', 'Greeting from POLKADOT', getCurrentDate()]]);
+  // let a = await ethereum.contractCall(greetingContract, 'greetings', [3]);
   // let a = await ethereum.contractCall(greetingContract, 'verify', [destinationChainName, contractActionName, polkadotGreetingContractAddress]);
   // let a = await ethereum.contractCall(greetingContract, 'permittedContractMap', [destinationChainName, contractActionName]);
   // let a = await ethereum.contractCall(greetingContract, 'crossChainContract', []);
-  console.log(a)
+  // console.log(a)
 }());
