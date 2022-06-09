@@ -1,16 +1,16 @@
 # solidity-contract-template
 
 ## Currently
-**This is under construction!**
-
-This repo contains a basic `greeting` smart contract integrated with DANTE cross-chain service.
-
-The basic version developed in `solidity` is currently available.
+**This is a high level SDK for solidity developers!**
+* A high level SDK to make your dApps Omnichain accessible.
+* The API which makes Omnichain contract invocations very easy is [here](https://github.com/dantenetwork/solidity-contract-template/blob/high-level-show/contracts/CrossChain/ContractAdvanced.sol)
+* The contract example for a simple message communication is [here](https://github.com/dantenetwork/solidity-contract-template/blob/high-level-show/contracts/Greetings.sol), and the related user defined example are:
+  * [init some user-defined information](https://github.com/dantenetwork/solidity-contract-template/blob/high-level-show/register/registerGreeting.js)
+* The contract example for a cross-chain contract invocation is [here](https://github.com/dantenetwork/solidity-contract-template/blob/high-level-show/contracts/OCComputing.sol), and the related user defined example are: 
+  * [init some user-defined information](https://github.com/dantenetwork/solidity-contract-template/blob/high-level-show/register/registerOCComputing.js)
 
 ## Coming soon
-- More functions in `solidity` version;
-- The high level SDK for `cross-chain contract call` is under developing, that will bring more convenient for developers.
-- The `Near Rust-wasm` version.
+- A cleaner version with a build-in message `Payload`, which will be make APIs more briefly.
 
 ## Usage
 
@@ -33,9 +33,4 @@ truffle compile
 ### Deploy smart contract to Avalanche FUJI testnet
 ```
 truffle migrate --network avalancheFuji --reset --skip-dry-run
-```
-
-### Register greeting contract to DANTE cross-chain service
-```
-node register/registerToAvalanche.js
 ```
