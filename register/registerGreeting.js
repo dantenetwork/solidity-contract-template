@@ -7,7 +7,9 @@ const web3 = new Web3('wss://devnetopenapi2.platon.network/ws');
 // const web3 = new Web3('https://data-seed-prebsc-1-s1.binance.org:8545');
 const crossChainContractAddress = '0xb43a34f4F83e9F8ce67EeD4951e2b7e5af4BdcaA';
 const nearGreetingContractAddress = '9f9350eb575cae7aac7f85a8c62b08d94dcac70a84e3c765464ff87c669fa4e5';
-const polkadotGreetingContractAddress = '5FnjHH1dxXGh5ZiCkKqdqk1deBZmTotseAPb4rFpdw84JwcD';
+const POLKADOT = "5EkxzvgGzcF9yJT7mtckecsXzjuVpmbmwBncnrHu4Zym7JMQ";
+const SHIBUYA = "XvLR3LGAeFoGKfWicBo18LkHeLC5S4YsArGN8VrCTqXa9qj";
+const destGreetingContractAddress = POLKADOT;
 const CHAIN_ID = 2203181;
 
 // Test account
@@ -44,25 +46,22 @@ const greetingContract = new web3.eth.Contract(greetingAbi, greetingContractAddr
   // Get current date
   function getCurrentDate() {
     var today = new Date();
-    var dd = String(today.getDate()).padStart(2, '0');
-    var mm = String(today.getMonth() + 1).padStart(2, '0');
-    var yyyy = today.getFullYear();
-    return yyyy + '-' + mm + '-' + dd;
+    return today.toString();
   }
 
   // Set cross chain contract address
   // await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'setCrossChainContract', testAccountPrivateKey, [crossChainContractAddress]);
   // Register contract info for sending messages to other chains
-  // await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerDestnContract', testAccountPrivateKey, [contractActionName, destinationChainName, polkadotGreetingContractAddress, destContractActionName]);
-  // await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerMessageABI', testAccountPrivateKey, [destinationChainName, polkadotGreetingContractAddress, destContractActionName, actionParamsType, actionParamsName]);
+  // await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerDestnContract', testAccountPrivateKey, [contractActionName, destinationChainName, destGreetingContractAddress, destContractActionName]);
+  // await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerMessageABI', testAccountPrivateKey, [destinationChainName, destGreetingContractAddress, destContractActionName, actionParamsType, actionParamsName]);
 
   // Register contract info for receiving messages from other chains.
-  // await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerPermittedContract', testAccountPrivateKey, [destinationChainName, polkadotGreetingContractAddress, contractActionName]);
+  // await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerPermittedContract', testAccountPrivateKey, [destinationChainName, destGreetingContractAddress, contractActionName]);
   // await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerContractABI', testAccountPrivateKey, [contractActionName, actionABI]);
-  await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'sendGreeting', testAccountPrivateKey, [destinationChainName, [destinationChainName, 'Greetings', 'Greeting from POLKADOT', getCurrentDate()]]);
-  // let a = await ethereum.contractCall(greetingContract, 'greetings', [3]);
-  // let a = await ethereum.contractCall(greetingContract, 'verify', [destinationChainName, contractActionName, polkadotGreetingContractAddress]);
+  await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'sendGreeting', testAccountPrivateKey, [destinationChainName, ['PLATON', 'Greetings', 'Greeting from PLATON', getCurrentDate()]]);
+  let a = await ethereum.contractCall(greetingContract, 'greetings', [8]);
+  // let a = await ethereum.contractCall(greetingContract, 'verify', [destinationChainName, contractActionName, destGreetingContractAddress]);
   // let a = await ethereum.contractCall(greetingContract, 'permittedContractMap', [destinationChainName, contractActionName]);
   // let a = await ethereum.contractCall(greetingContract, 'crossChainContract', []);
-  // console.log(a)
+  console.log(a)
 }());

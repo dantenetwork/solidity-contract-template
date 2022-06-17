@@ -3,11 +3,13 @@ const fs = require('fs');
 const ethereum = require('./ethereum');
 
 // const web3 = new Web3('https://api.avax-test.network/ext/bc/C/rpc');
-// const web3 = new Web3('wss://devnetopenapi2.platon.network/ws');
-const web3 = new Web3('https://data-seed-prebsc-1-s1.binance.org:8545');
-const crossChainContractAddress = '0x63819128fFb3F84BB2C7B2e41875332ec9D66376';
+const web3 = new Web3('wss://devnetopenapi2.platon.network/ws');
+// const web3 = new Web3('https://data-seed-prebsc-1-s1.binance.org:8545');
+const crossChainContractAddress = '0xb43a34f4F83e9F8ce67EeD4951e2b7e5af4BdcaA';
 const nearOCContractAddress = 'a7d1736372266477e0d0295d34ae47622ba50d007031a009976348f954e681fe';
-const CHAIN_ID = 97;
+const POLKADOT = "5HMgeRoy6cD8yBK2UC18mnbwX7kpoS94XdpDv1Kkfcm1Ax1g";
+const destOSComputingContractAddress = POLKADOT;
+const CHAIN_ID = 2203181;
 
 // Test account
 let testAccountPrivateKey = fs.readFileSync('.secret').toString();
@@ -23,19 +25,19 @@ const ocContract = new web3.eth.Contract(ocAbi, contractAddress);
 
 (async function init() {
   // destination chain name
-  const destinationChainName = 'NEAR';
+  const destinationChainName = 'POLKADOT';
 
   // OCComputing contract action name
   const receiveTaskActionName = 'receiveComputeTask';
   const receiveResultActionName = 'receiveComputeTaskCallback';
 
   // OCComputing contract destination action name
-  const destReceiveTaskActionName = 'receive_compute_task';
-  const destReceiveResultActionName = 'receive_compute_result';
+  const destReceiveTaskActionName = '0xfc796c19';
+  const destReceiveResultActionName = '0x609ec10e';
 
   // OCComputing action each param type
-  const receiveTaskParamsType = 'uint256[]';
-  const receiveResultParamsType = 'uint256';
+  const receiveTaskParamsType = 'uint32[]';
+  const receiveResultParamsType = 'uint32';
 
   // OCComputing action each param name
   const receiveTaskParamsName = 'nums';
@@ -48,16 +50,21 @@ const ocContract = new web3.eth.Contract(ocAbi, contractAddress);
   const receiveResultABI = '{"inputs":[{"internalType":"uint256","name":"_result","type":"uint256"}],"name":"receiveComputeTaskCallback","outputs":[],"stateMutability":"nonpayable","type":"function"}';
 
   // Set cross chain contract address
-  await ethereum.sendTransaction(web3, CHAIN_ID, ocContract, 'setCrossChainContract', testAccountPrivateKey, [crossChainContractAddress]);
+  // await ethereum.sendTransaction(web3, CHAIN_ID, ocContract, 'setCrossChainContract', testAccountPrivateKey, [crossChainContractAddress]);
   // Register contract info for sending messages to other chains
-  await ethereum.sendTransaction(web3, CHAIN_ID, ocContract, 'registerDestnContract', testAccountPrivateKey, [receiveTaskActionName, destinationChainName, nearOCContractAddress, destReceiveTaskActionName]);
-  await ethereum.sendTransaction(web3, CHAIN_ID, ocContract, 'registerDestnContract', testAccountPrivateKey, [receiveResultActionName, destinationChainName, nearOCContractAddress, destReceiveResultActionName]);
-  await ethereum.sendTransaction(web3, CHAIN_ID, ocContract, 'registerMessageABI', testAccountPrivateKey, [destinationChainName, nearOCContractAddress, destReceiveTaskActionName, receiveTaskParamsType, receiveTaskParamsName]);
-  await ethereum.sendTransaction(web3, CHAIN_ID, ocContract, 'registerMessageABI', testAccountPrivateKey, [destinationChainName, nearOCContractAddress, destReceiveResultActionName, receiveResultParamsType, receiveResultParamsName]);
+  // await ethereum.sendTransaction(web3, CHAIN_ID, ocContract, 'registerDestnContract', testAccountPrivateKey, [receiveTaskActionName, destinationChainName, destOSComputingContractAddress, destReceiveTaskActionName]);
+  // await ethereum.sendTransaction(web3, CHAIN_ID, ocContract, 'registerDestnContract', testAccountPrivateKey, [receiveResultActionName, destinationChainName, destOSComputingContractAddress, destReceiveResultActionName]);
+  // await ethereum.sendTransaction(web3, CHAIN_ID, ocContract, 'registerMessageABI', testAccountPrivateKey, [destinationChainName, destOSComputingContractAddress, destReceiveTaskActionName, receiveTaskParamsType, receiveTaskParamsName]);
+  // await ethereum.sendTransaction(web3, CHAIN_ID, ocContract, 'registerMessageABI', testAccountPrivateKey, [destinationChainName, destOSComputingContractAddress, destReceiveResultActionName, receiveResultParamsType, receiveResultParamsName]);
 
   // Register contract info for receiving messages from other chains.
-  await ethereum.sendTransaction(web3, CHAIN_ID, ocContract, 'registerPermittedContract', testAccountPrivateKey, [destinationChainName, nearOCContractAddress, receiveTaskActionName]);
-  await ethereum.sendTransaction(web3, CHAIN_ID, ocContract, 'registerPermittedContract', testAccountPrivateKey, [destinationChainName, nearOCContractAddress, receiveResultActionName]);
-  await ethereum.sendTransaction(web3, CHAIN_ID, ocContract, 'registerContractABI', testAccountPrivateKey, [receiveTaskActionName, receiveTaskABI]);
-  await ethereum.sendTransaction(web3, CHAIN_ID, ocContract, 'registerCallbackAbi', testAccountPrivateKey, [destinationChainName, nearOCContractAddress, destReceiveTaskActionName, receiveResultABI]);
+  // await ethereum.sendTransaction(web3, CHAIN_ID, ocContract, 'registerPermittedContract', testAccountPrivateKey, [destinationChainName, destOSComputingContractAddress, receiveTaskActionName]);
+  // await ethereum.sendTransaction(web3, CHAIN_ID, ocContract, 'registerPermittedContract', testAccountPrivateKey, [destinationChainName, destOSComputingContractAddress, receiveResultActionName]);
+  // await ethereum.sendTransaction(web3, CHAIN_ID, ocContract, 'registerContractABI', testAccountPrivateKey, [receiveTaskActionName, receiveTaskABI]);
+  // await ethereum.sendTransaction(web3, CHAIN_ID, ocContract, 'registerCallbackAbi', testAccountPrivateKey, [destinationChainName, destOSComputingContractAddress, destReceiveTaskActionName, receiveResultABI]);
+
+  // Send message
+  // await ethereum.sendTransaction(web3, CHAIN_ID, ocContract, 'sendComputeTask', testAccountPrivateKey, [destinationChainName, [2020, 6, 17]]);
+  let a = await ethereum.contractCall(ocContract, 'ocResult', [2]);
+  console.log(a);
 }());
