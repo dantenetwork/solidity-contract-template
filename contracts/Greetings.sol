@@ -74,7 +74,7 @@ contract Greetings is ContractBase {
      */
     function sendGreeting(
         string calldata _toChain,
-        Greeting calldata _greeting
+        string[] calldata _greeting
     ) external {
         mapping(string => DestnContract) storage map = destnContractMap[_toChain];
         DestnContract storage destnContract = map["receiveGreeting"];
