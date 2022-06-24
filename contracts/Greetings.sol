@@ -41,9 +41,7 @@ contract Greetings is ContractBase {
      * Receive greeting info from other chains
      * @param _greeting - greeting sent from other chain
      */
-    function receiveGreeting(
-        Greeting calldata _greeting
-    ) public {
+    function receiveGreeting(Payload calldata _payload) public {
         require(
             msg.sender == address(crossChainContract),
             "Locker: caller is not CrossChain"
@@ -80,78 +78,22 @@ contract Greetings is ContractBase {
         DestnContract storage destnContract = map["receiveGreeting"];
         require(destnContract.used, "action not registered");
 
-        bytes memory data = abi.encode(_greeting);
-        SQOS memory sqos = SQOS(1);
-        crossChainContract.sendMessage(
-            _toChain,
-            destnContract.contractAddress,
-            destnContract.funcName,
-            sqos,
-            data,
-            Session(0, 0)
-        );
-    }
+        // Construct payload
+        Payload memory data;
+        PayloadItem memory item = data.items[0];
+        item.name = "greeting";
+        item.msgType = "string[4]";
+        item.value = abi.encode();
+        data.len = 1;
+        bytes memory data = abi.encode([_greeting.fromChain, _greeting.title, _greeting.content, _greeting.date]);
 
-    /**
-     * Send outsourcing computing task to other chain
-     * @param _toChain - to chain name
-     * @param _nums - nums to be accumulated
-     */
-    function sendComputeTask(string calldata _toChain, uint[] calldata _nums) external {
-        mapping(string => DestnContract) storage map = destnContractMap[_toChain];
-        DestnContract storage destnContract = map["receiveComputeTask"];
-        require(destnContract.used, "action not registered");
+        ISentMessage memory message;
+        message.toChain = _toChain;
+        message.sqos = SQOS(1);
+        message.session = Session(0, 0);
+        message.content = Content(destnContract.contractAddress, destnContract.funcName, data);
 
-        bytes memory data = abi.encode(_nums);
-        SQOS memory sqos = SQOS(0);
-        crossChainContract.sendMessage(
-            _toChain,
-            destnContract.contractAddress,
-            destnContract.funcName,
-            sqos,
-            data,
-            Session(0, 0)
-        );
-    }
-
-    /**
-     * Receives outsourcing computing task from other chain
-     * @param _nums - nums to be accumulated
-     */
-    function receiveComputeTask(uint[] calldata _nums) external {
-        require(
-            msg.sender == address(crossChainContract),
-            "Locker: caller is not CrossChain"
-        );
-        
-        // compute
-        uint ret = 0;
-        for (uint i = 0; i < _nums.length; i++) {
-            ret += _nums[i];
-        }
-
-        SimplifiedMessage memory context = getContext();
-
-        // send result back
-        mapping(string => DestnContract) storage map = destnContractMap[context.fromChain];
-        DestnContract storage destnContract = map["receiveComputeResult"];
-        require(destnContract.used, "action not registered");
-
-        bytes memory data = abi.encode(ret);
-        SQOS memory sqos = SQOS(0);
-        crossChainContract.sendMessage(context.fromChain, destnContract.contractAddress, destnContract.funcName, sqos, data, Session(0, 0));
-    }
-
-    /**
-     * Receives outsourcing computing result
-     * @param _result - accumulating result
-     */
-    function receiveComputeResult(uint _result) external {
-        require(
-            msg.sender == address(crossChainContract),
-            "Locker: caller is not CrossChain"
-        );
-        ocResult = _result;
+        crossChainContract.sendMessage(message);
     }
 
     ///////////////////////////////////////////////
