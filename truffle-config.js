@@ -54,7 +54,7 @@ module.exports = {
       network_id: "*",       // Any network (default: none)
     },
     rinkeby: {
-      provider: () => new HDWalletProvider(mnemonic, `https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161`),
+      provider: () => new HDWalletProvider(mnemonic, `wss://rinkeby.infura.io/ws/v3/94ebec44ffc34501898dd5dccf387f81`),
       network_id: "*",       // Any network (default: none)
     }
   },

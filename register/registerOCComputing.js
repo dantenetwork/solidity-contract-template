@@ -3,14 +3,16 @@ const fs = require('fs');
 const ethereum = require('./ethereum');
 
 // const web3 = new Web3('https://api.avax-test.network/ext/bc/C/rpc');
-const web3 = new Web3('wss://devnetopenapi2.platon.network/ws');
-web3.eth.handleRevert = true;
+// const web3 = new Web3('wss://devnetopenapi2.platon.network/ws');
+// web3.eth.handleRevert = true;
 // const web3 = new Web3('https://data-seed-prebsc-1-s1.binance.org:8545');
-const crossChainContractAddress = '0xb43a34f4F83e9F8ce67EeD4951e2b7e5af4BdcaA';
+const web3 = new Web3('wss://rinkeby.infura.io/ws/v3/94ebec44ffc34501898dd5dccf387f81');
+const crossChainContractAddress = '0x359d5510405093f7Ea15408a0A3F52c52730A77e';
 const nearOCContractAddress = 'a7d1736372266477e0d0295d34ae47622ba50d007031a009976348f954e681fe';
-const POLKADOT = "5GQ4qmPE3r2Xex7wtpk6XaEjdvH9fcDzQpx3y3hpsJiTjkNE";
-const destOSComputingContractAddress = POLKADOT;
-const CHAIN_ID = 2203181;
+const POLKADOT = "5F3Lp5H5bJavW6YYi3aKbYJqdJQHPiNQo4WzujVeXKv9wd5N";
+const SHIBUYA = "5D6gvY4fsUsjkQcPnHtxRTy72CxC12RzFzXHknaZDts2sX2T";
+const destOSComputingContractAddress = SHIBUYA;
+const CHAIN_ID = 4;
 
 // Test account
 let testAccountPrivateKey = fs.readFileSync('.secret').toString();
@@ -26,7 +28,7 @@ const ocContract = new web3.eth.Contract(ocAbi, contractAddress);
 
 (async function init() {
   // destination chain name
-  const destinationChainName = 'POLKADOT';
+  const destinationChainName = 'ASTAR';
 
   // OCComputing contract action name
   const receiveTaskActionName = 'receiveComputeTask';

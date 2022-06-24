@@ -3,14 +3,15 @@ const fs = require('fs');
 const ethereum = require('./ethereum');
 
 // const web3 = new Web3('https://api.avax-test.network/ext/bc/C/rpc');
-const web3 = new Web3('wss://devnetopenapi2.platon.network/ws');
+// const web3 = new Web3('wss://devnetopenapi2.platon.network/ws');
 // const web3 = new Web3('https://data-seed-prebsc-1-s1.binance.org:8545');
-const crossChainContractAddress = '0xb43a34f4F83e9F8ce67EeD4951e2b7e5af4BdcaA';
+const web3 = new Web3('wss://rinkeby.infura.io/ws/v3/94ebec44ffc34501898dd5dccf387f81');
+const crossChainContractAddress = '0x359d5510405093f7Ea15408a0A3F52c52730A77e';
 const nearGreetingContractAddress = '9f9350eb575cae7aac7f85a8c62b08d94dcac70a84e3c765464ff87c669fa4e5';
-const POLKADOT = "5Hn3rCWbjJmjgEbAzUcxfdPnef6g8HTz5xW4SSRxV4zY7rQY";
-const SHIBUYA = "XvLR3LGAeFoGKfWicBo18LkHeLC5S4YsArGN8VrCTqXa9qj";
-const destGreetingContractAddress = POLKADOT;
-const CHAIN_ID = 2203181;
+// const POLKADOT = "5CBD313ffFKkibotMZGMJpFpFshL237Lfv1rrsoj5qGrgQTz";
+const SHIBUYA = "5CqHgtxcuqhng95pxXvS25hBCPXNv9wKhvSktK7SgtDPjBTd";
+const destGreetingContractAddress = SHIBUYA;
+const CHAIN_ID = 4;
 
 // Test account
 let testAccountPrivateKey = fs.readFileSync('.secret').toString();
@@ -26,7 +27,7 @@ const greetingContract = new web3.eth.Contract(greetingAbi, greetingContractAddr
 
 (async function init() {
   // destination chain name
-  const destinationChainName = 'POLKADOT';
+  const destinationChainName = 'ASTAR';
 
   // greeting contract action name
   const contractActionName = 'receiveGreeting';
@@ -58,4 +59,10 @@ const greetingContract = new web3.eth.Contract(greetingAbi, greetingContractAddr
   // Register contract info for receiving messages from other chains.
   await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerPermittedContract', testAccountPrivateKey, [destinationChainName, destGreetingContractAddress, contractActionName]);
   await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerContractABI', testAccountPrivateKey, [contractActionName, actionABI]);
+  // await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'sendGreeting', testAccountPrivateKey, [destinationChainName, ['PLATON', 'Greetings', 'Greeting from PLATON', getCurrentDate()]]);
+  // let a = await ethereum.contractCall(greetingContract, 'greetings', [3]);
+  // let a = await ethereum.contractCall(greetingContract, 'verify', [destinationChainName, contractActionName, destGreetingContractAddress]);
+  // let a = await ethereum.contractCall(greetingContract, 'permittedContractMap', [destinationChainName, contractActionName]);
+  // let a = await ethereum.contractCall(greetingContract, 'crossChainContract', []);
+  console.log(a)
 }());
