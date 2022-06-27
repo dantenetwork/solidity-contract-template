@@ -4,10 +4,14 @@ const ethereum = require('./ethereum');
 
 // const web3 = new Web3('https://api.avax-test.network/ext/bc/C/rpc');
 // const web3 = new Web3('wss://devnetopenapi2.platon.network/ws');
-const web3 = new Web3('https://data-seed-prebsc-1-s1.binance.org:8545');
-const crossChainContractAddress = '0x63819128fFb3F84BB2C7B2e41875332ec9D66376';
+// const web3 = new Web3('https://data-seed-prebsc-1-s1.binance.org:8545');
+const web3 = new Web3('wss://rinkeby.infura.io/ws/v3/94ebec44ffc34501898dd5dccf387f81');
+const crossChainContractAddress = '0x359d5510405093f7Ea15408a0A3F52c52730A77e';
 const nearGreetingContractAddress = '9f9350eb575cae7aac7f85a8c62b08d94dcac70a84e3c765464ff87c669fa4e5';
-const CHAIN_ID = 97;
+// const POLKADOT = "5CBD313ffFKkibotMZGMJpFpFshL237Lfv1rrsoj5qGrgQTz";
+const SHIBUYA = "5CqHgtxcuqhng95pxXvS25hBCPXNv9wKhvSktK7SgtDPjBTd";
+const destGreetingContractAddress = SHIBUYA;
+const CHAIN_ID = 4;
 
 // Test account
 let testAccountPrivateKey = fs.readFileSync('.secret').toString();
@@ -23,16 +27,16 @@ const greetingContract = new web3.eth.Contract(greetingAbi, greetingContractAddr
 
 (async function init() {
   // destination chain name
-  const destinationChainName = 'NEAR';
+  const destinationChainName = 'ASTAR';
 
   // greeting contract action name
   const contractActionName = 'receiveGreeting';
 
   // greeting contract destination action name
-  const destContractActionName = 'receive_greeting';
+  const destContractActionName = '0x0c724dc2';
 
   // greeting action each param type
-  const actionParamsType = 'tuple(string,string,string,string)';
+  const actionParamsType = 'string[]';
 
   // greeting action each param name
   const actionParamsName = 'greeting';
@@ -43,19 +47,22 @@ const greetingContract = new web3.eth.Contract(greetingAbi, greetingContractAddr
   // Get current date
   function getCurrentDate() {
     var today = new Date();
-    var dd = String(today.getDate()).padStart(2, '0');
-    var mm = String(today.getMonth() + 1).padStart(2, '0');
-    var yyyy = today.getFullYear();
-    return yyyy + '-' + mm + '-' + dd;
+    return today.toString();
   }
 
   // Set cross chain contract address
   await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'setCrossChainContract', testAccountPrivateKey, [crossChainContractAddress]);
   // Register contract info for sending messages to other chains
-  await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerDestnContract', testAccountPrivateKey, [contractActionName, destinationChainName, nearGreetingContractAddress, destContractActionName]);
-  await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerMessageABI', testAccountPrivateKey, [destinationChainName, nearGreetingContractAddress, destContractActionName, actionParamsType, actionParamsName]);
+  await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerDestnContract', testAccountPrivateKey, [contractActionName, destinationChainName, destGreetingContractAddress, destContractActionName]);
+  await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerMessageABI', testAccountPrivateKey, [destinationChainName, destGreetingContractAddress, destContractActionName, actionParamsType, actionParamsName]);
 
   // Register contract info for receiving messages from other chains.
-  await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerPermittedContract', testAccountPrivateKey, [destinationChainName, nearGreetingContractAddress, contractActionName]);
+  await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerPermittedContract', testAccountPrivateKey, [destinationChainName, destGreetingContractAddress, contractActionName]);
   await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerContractABI', testAccountPrivateKey, [contractActionName, actionABI]);
+  // await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'sendGreeting', testAccountPrivateKey, [destinationChainName, ['PLATON', 'Greetings', 'Greeting from PLATON', getCurrentDate()]]);
+  // let a = await ethereum.contractCall(greetingContract, 'greetings', [3]);
+  // let a = await ethereum.contractCall(greetingContract, 'verify', [destinationChainName, contractActionName, destGreetingContractAddress]);
+  // let a = await ethereum.contractCall(greetingContract, 'permittedContractMap', [destinationChainName, contractActionName]);
+  // let a = await ethereum.contractCall(greetingContract, 'crossChainContract', []);
+  console.log(a)
 }());

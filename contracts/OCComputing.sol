@@ -35,7 +35,7 @@ contract OCComputing is ContractAdvanced, IOCComputing {
      * @param _toChain - to chain name
      * @param _nums - nums to be accumulated
      */
-    function sendComputeTask(string calldata _toChain, uint[] calldata _nums) external {
+    function sendComputeTask(string calldata _toChain, uint32[] calldata _nums) external {
         mapping(string => DestnContract) storage map = destnContractMap[_toChain];
         DestnContract storage destnContract = map["receiveComputeTask"];
         require(destnContract.used, "action not registered");
@@ -63,7 +63,7 @@ contract OCComputing is ContractAdvanced, IOCComputing {
      * Receives outsourcing computing task from other chain
      * @param _nums - nums to be accumulated
      */
-    function receiveComputeTask(uint[] calldata _nums) external {
+    function receiveComputeTask(uint32[] calldata _nums) external {
         require(
             msg.sender == address(crossChainContract),
             "Locker: caller is not CrossChain"
