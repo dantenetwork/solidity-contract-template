@@ -85,7 +85,7 @@ contract Greetings is ContractBase {
         PayloadItem memory item = data.items[0];
         item.name = "greeting";
         item.msgType = "string[4]";
-        item.value = abi.encode([_greeting.fromChain, _greeting.title, _greeting.content, _greeting.date]);
+        item.value = abi.encode([_greeting[0], _greeting[1], _greeting[2], _greeting[3]]);
         data.len = 1;
 
         ISentMessage memory message;

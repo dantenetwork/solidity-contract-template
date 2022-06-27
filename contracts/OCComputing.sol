@@ -3,10 +3,9 @@ pragma solidity >=0.8.0 <0.9.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./CrossChain/ContractAdvanced.sol";
-import "./IOCComputing.sol";
 
 // `OCComputing` is an example of multi-chain services with necessary implementations in `ContractAdvanced`, which provides basic cross-chain call interfaces.
-contract OCComputing is ContractAdvanced, IOCComputing {
+contract OCComputing is ContractAdvanced {
     // Destination contract info
     struct DestnContract {
         string contractAddress; // destination contract address
@@ -61,13 +60,16 @@ contract OCComputing is ContractAdvanced, IOCComputing {
 
     /**
      * Receives outsourcing computing task from other chain
-     * @param _nums - nums to be accumulated
+     * @param _payload - payload which contains nums to be accumulated
      */
-    function receiveComputeTask(uint32[] calldata _nums) external {
+    function receiveComputeTask(Payload calldata _payload) external {
         require(
             msg.sender == address(crossChainContract),
             "Locker: caller is not CrossChain"
         );
+
+        // decode
+        (uint32[] memory _nums) = abi.decode(_payload.items[0].value, (uint32[]));
         
         // compute
         uint ret = 0;
@@ -86,7 +88,7 @@ contract OCComputing is ContractAdvanced, IOCComputing {
         PayloadItem memory item = data.items[0];
         item.name = "result";
         item.msgType = "uint32";
-        item.value = abi.encode([_greeting.fromChain, _greeting.title, _greeting.content, _greeting.date]);
+        item.value = abi.encode(ret);
         data.len = 1;
         SQOS memory sqos = SQOS(0);
         crossChainRespond(destnContract.funcName, sqos, data);
@@ -95,7 +97,13 @@ contract OCComputing is ContractAdvanced, IOCComputing {
     /**
      * See IOCComputing
      */
-    function receiveComputeTaskCallback(uint _result) external override {
+    function receiveComputeTaskCallback(Payload calldata _payload) external {
+        require(
+            msg.sender == address(crossChainContract),
+            "Locker: caller is not CrossChain"
+        );
+
+        (uint _result) = abi.decode(_payload.items[0].value, (uint32));
         SimplifiedMessage memory context = getContext();
         OCResult storage result = ocResult[context.session.id];
         result.used = true;
