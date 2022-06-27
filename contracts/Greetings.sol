@@ -26,7 +26,7 @@ contract Greetings is ContractBase {
     mapping(string => mapping(string => DestnContract)) public destnContractMap;
 
     // Cross-chain permitted contract map
-    mapping(string => mapping(string => string)) public permittedContractMap;
+    mapping(string => mapping(bytes4 => string)) public permittedContractMap;
 
     // Store greetings
     mapping(uint256 => Greeting) public greetings;
@@ -53,7 +53,7 @@ contract Greetings is ContractBase {
         require(context.sqos.reveal == 1, "SQoS invalid!");
 
         // verify the sender from the registered chain
-        mapping(string => string)
+        mapping(bytes4 => string)
             storage permittedContract = permittedContractMap[context.fromChain];
 
         require(
@@ -62,7 +62,7 @@ contract Greetings is ContractBase {
             "message sender is not registered!"
         );
 
-        (string[4] memory _value) =  abi.decode(_payload.items[0].value, (string[4]));
+        (string[] memory _value) = abi.decode(_payload.items[0].value, (string[]));
         Greeting memory _greeting = Greeting(_value[0], _value[1], _value[2], _value[3]);
         greetings[context.id] = _greeting;
     }
@@ -84,14 +84,14 @@ contract Greetings is ContractBase {
         Payload memory data;
         PayloadItem memory item = data.items[0];
         item.name = "greeting";
-        item.msgType = "string[4]";
-        item.value = abi.encode([_greeting[0], _greeting[1], _greeting[2], _greeting[3]]);
+        item.msgType = "string[]";
+        item.value = abi.encode(_greeting);
         data.len = 1;
 
         ISentMessage memory message;
         message.toChain = _toChain;
         message.sqos = SQOS(1);
-        message.session = Session(0, 0);
+        message.session = Session(0, bytes4(""));
         message.content = Content(destnContract.contractAddress, destnContract.funcName, data);
 
         crossChainContract.sendMessage(message);
@@ -134,9 +134,9 @@ contract Greetings is ContractBase {
     function registerPermittedContract(
         string calldata _chainName,
         string calldata _sender,
-        string calldata _funcName
+        bytes4 _funcName
     ) external onlyOwner {
-        mapping(string => string) storage map = permittedContractMap[
+        mapping(bytes4 => string) storage map = permittedContractMap[
             _chainName
         ];
         map[_funcName] = _sender;
@@ -151,17 +151,17 @@ contract Greetings is ContractBase {
     //  Will be deprecated soon
     function verify(
         string calldata _chainName,
-        string calldata _funcName,
+        bytes4 _funcName,
         string calldata _sender
     ) public view virtual returns (bool) {
-        mapping(string => string) storage map = permittedContractMap[
-            _chainName
-        ];
-        string storage sender = map[_funcName];
-        require(
-            keccak256(bytes(sender)) == keccak256(bytes(_sender)),
-            "Sender does not match"
-        );
+        // mapping(bytes4 => string) storage map = permittedContractMap[
+        //     _chainName
+        // ];
+        // string storage sender = map[_funcName];
+        // require(
+        //     keccak256(bytes(sender)) == keccak256(bytes(_sender)),
+        //     "Sender does not match"
+        // );
         return true;
     }
 }
