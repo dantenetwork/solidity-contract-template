@@ -39,7 +39,7 @@ contract Greetings is ContractBase {
 
     /**
      * Receive greeting info from other chains
-     * @param _greeting - greeting sent from other chain
+     * @param _payload - payload which contains greeting message
      */
     function receiveGreeting(Payload calldata _payload) public {
         require(
@@ -62,6 +62,8 @@ contract Greetings is ContractBase {
             "message sender is not registered!"
         );
 
+        (string[4] memory _value) =  abi.decode(_payload.items[0].value, (string[4]));
+        Greeting memory _greeting = Greeting(_value[0], _value[1], _value[2], _value[3]);
         greetings.push(_greeting);
     }
 
@@ -83,9 +85,8 @@ contract Greetings is ContractBase {
         PayloadItem memory item = data.items[0];
         item.name = "greeting";
         item.msgType = "string[4]";
-        item.value = abi.encode();
+        item.value = abi.encode([_greeting.fromChain, _greeting.title, _greeting.content, _greeting.date]);
         data.len = 1;
-        bytes memory data = abi.encode([_greeting.fromChain, _greeting.title, _greeting.content, _greeting.date]);
 
         ISentMessage memory message;
         message.toChain = _toChain;

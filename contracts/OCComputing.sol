@@ -40,7 +40,14 @@ contract OCComputing is ContractAdvanced, IOCComputing {
         DestnContract storage destnContract = map["receiveComputeTask"];
         require(destnContract.used, "action not registered");
 
-        bytes memory data = abi.encode(_nums);
+        // Construct payload
+        Payload memory data;
+        PayloadItem memory item = data.items[0];
+        item.name = "nums";
+        item.msgType = "uint[]";
+        item.value = abi.encode(_nums);
+        data.len = 1;
+
         SQOS memory sqos = SQOS(0);
         uint id = crossChainCall(
             _toChain,
@@ -74,7 +81,13 @@ contract OCComputing is ContractAdvanced, IOCComputing {
         DestnContract storage destnContract = map["receiveComputeTaskCallback"];
         require(destnContract.used, "action not registered");
 
-        bytes memory data = abi.encode(ret);
+        // Construct payload
+        Payload memory data;
+        PayloadItem memory item = data.items[0];
+        item.name = "result";
+        item.msgType = "uint32";
+        item.value = abi.encode([_greeting.fromChain, _greeting.title, _greeting.content, _greeting.date]);
+        data.len = 1;
         SQOS memory sqos = SQOS(0);
         crossChainRespond(destnContract.funcName, sqos, data);
     }
