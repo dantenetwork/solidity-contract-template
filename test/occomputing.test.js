@@ -16,6 +16,7 @@ contract('OCComputing', function(accounts) {
 
     let crossChain;
     let ocComputing;
+    let messageVerify;
     
     let initContract = async function() {
         crossChain = await CrossChain.new('PLATONEVMDEV');
@@ -57,11 +58,11 @@ contract('OCComputing', function(accounts) {
     describe('Receive OC Computing Task', function() {
         it('should execute successfully', async () => {
             let to = OCComputing.address;
-            let action = 'receiveComputeTask';
-            let function_str = await crossChain.interfaces(ocComputing.address, action);
-            let function_json = JSON.parse(function_str);
-            let calldata = web3js.eth.abi.encodeFunctionCall(function_json, [[1,2,3,6]]);
-            await crossChain.receiveMessage('PLATONEVMDEV', 1, OCComputing.address, owner, to, {reveal: 0}, action, calldata, {resType: 1, id: 0}, {from: user1});
+            let action = '0x1db89088';
+            let calldata = '0x00';
+            let argument = [1, 'PLATONEVMDEV', OCComputing.address, owner, [0], to, action, calldata, [0, '0x11111111'], 0];
+            console.log('argument' ,argument, await crossChain.verifyContract())
+            await crossChain.receiveMessage(argument, {from: user1});
             await crossChain.executeMessage('PLATONEVMDEV', 1);
             let context = await crossChain.currentSimplifiedMessage();
             assert(context.id.eq(new BN('1')));
@@ -71,11 +72,10 @@ contract('OCComputing', function(accounts) {
     describe('Receive OC Computing Task Callback', function() {
         it('should execute successfully', async () => {
             let to = OCComputing.address;
-            let action = 'receiveComputeTaskCallback';
-            let function_str = await crossChain.interfaces(ocComputing.address, action);
-            let function_json = JSON.parse(function_str);
-            let calldata = web3js.eth.abi.encodeFunctionCall(function_json, [12]);
-            await crossChain.receiveMessage('PLATONEVMDEV', 2, OCComputing.address, owner, to, {reveal: 0}, action, calldata, {resType: 2, id: 1}, {from: user1});
+            let action = '0xdb1b3c7f';
+            let calldata = '0x00';
+            let argument = [2, 'PLATONEVMDEV', OCComputing.address, owner, [0], to, action, calldata, [0, '0x11111111'], 0];
+            await crossChain.receiveMessage(argument, {from: user1});
             await crossChain.executeMessage('PLATONEVMDEV', 2);
             let context = await crossChain.currentSimplifiedMessage();
             assert(context.id.eq(new BN('2')));
