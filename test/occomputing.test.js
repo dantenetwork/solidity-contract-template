@@ -61,7 +61,6 @@ contract('OCComputing', function(accounts) {
             let action = '0x1db89088';
             let calldata = '0x00';
             let argument = [1, 'PLATONEVMDEV', OCComputing.address, owner, [0], to, action, calldata, [0, '0x11111111'], 0];
-            console.log('argument' ,argument, await crossChain.verifyContract())
             await crossChain.receiveMessage(argument, {from: user1});
             await crossChain.executeMessage('PLATONEVMDEV', 1);
             let context = await crossChain.currentSimplifiedMessage();

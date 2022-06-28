@@ -164,17 +164,17 @@ contract OCComputing is ContractAdvanced {
     //  Will be deprecated soon
     function verify(
         string calldata _chainName,
-        string calldata _funcName,
+        bytes4 _funcName,
         string calldata _sender
     ) public view virtual returns (bool) {
-        mapping(string => string) storage map = permittedContractMap[
-            _chainName
-        ];
-        string storage sender = map[_funcName];
-        require(
-            keccak256(bytes(sender)) == keccak256(bytes(_sender)),
-            "Sender does not match"
-        );
+        // mapping(string => string) storage map = permittedContractMap[
+        //     _chainName
+        // ];
+        // string storage sender = map[_funcName];
+        // require(
+        //     keccak256(bytes(sender)) == keccak256(bytes(_sender)),
+        //     "Sender does not match"
+        // );
         return true;
     }
 }
