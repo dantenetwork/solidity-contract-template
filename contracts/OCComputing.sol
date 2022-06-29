@@ -103,7 +103,7 @@ contract OCComputing is ContractAdvanced {
             "Locker: caller is not CrossChain"
         );
 
-        (uint _result) = abi.decode(_payload.items[0].value, (uint32));
+        (uint32 _result) = abi.decode(_payload.items[0].value, (uint32));
         SimplifiedMessage memory context = getContext();
         OCResult storage result = ocResult[context.session.id];
         result.used = true;
