@@ -41,11 +41,11 @@ contract OCComputing is ContractAdvanced {
 
         // Construct payload
         Payload memory data;
+        data.items = new PayloadItem[](1);
         PayloadItem memory item = data.items[0];
         item.name = "nums";
-        item.msgType = "uint[]";
+        item.msgType = MsgType.EvmU32Array;
         item.value = abi.encode(_nums);
-        data.len = 1;
 
         SQOS memory sqos = SQOS(0);
         uint id = crossChainCall(
@@ -85,11 +85,11 @@ contract OCComputing is ContractAdvanced {
 
         // Construct payload
         Payload memory data;
+        data.items = new PayloadItem[](1);
         PayloadItem memory item = data.items[0];
         item.name = "result";
-        item.msgType = "uint32";
+        item.msgType = MsgType.EvmU32;
         item.value = abi.encode(ret);
-        data.len = 1;
         SQOS memory sqos = SQOS(0);
         crossChainRespond(destnContract.funcName, sqos, data);
     }
