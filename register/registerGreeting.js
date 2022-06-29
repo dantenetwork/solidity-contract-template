@@ -4,22 +4,23 @@ const ethereum = require('./ethereum');
 
 /*
 Test1:
-Greeting: 0x621e1dFfa7c9eE402AcEd93Ceb00b737987e8604
-Computing: 0x457df1a8B1a2E67a413FCDE50782D031fA128BAA
+Greeting: 0xa9cCbB3FC3215109c7c214c8E02EF91fD3FdEfb8
+Computing: 0x45B200D9caFAc6067d7bf7e93C49F4D51314B6B5
 PlatON:
-Greeting: 0xb752F7f634d6d02F8DbD200d26C1bC667654d21a
-Computing: 0x4ca3e1B18829DE369fe2862F3712E81c77cdaDCb
+Greeting: 0xA2344a15989D9f9762F19c53cf0040EF47F664Bd
+Computing: 0x4EC04F2697FED60372CD5d6CfDC9F4Cb159C2493
 */
 
 // const web3 = new Web3('https://api.avax-test.network/ext/bc/C/rpc');
 const web3 = new Web3('wss://devnetopenapi2.platon.network/ws');
+web3.eth.handleRevert = true;
 // const web3 = new Web3('https://data-seed-prebsc-1-s1.binance.org:8545');
 // const web3 = new Web3('wss://rinkeby.infura.io/ws/v3/94ebec44ffc34501898dd5dccf387f81');
-const crossChainContractAddress = '0x1A5D61971AaAC09Fa916e080aAab41cb5C02c1c1';
+const crossChainContractAddress = '0x17caBf5d2A65Da01f5D45E35c5cCedE61AFaD332';
 const nearGreetingContractAddress = '9f9350eb575cae7aac7f85a8c62b08d94dcac70a84e3c765464ff87c669fa4e5';
 // const POLKADOT = "5CBD313ffFKkibotMZGMJpFpFshL237Lfv1rrsoj5qGrgQTz";
 const SHIBUYA = "5CqHgtxcuqhng95pxXvS25hBCPXNv9wKhvSktK7SgtDPjBTd";
-const destGreetingContractAddress = '0xb752F7f634d6d02F8DbD200d26C1bC667654d21a';
+const destGreetingContractAddress = '0xa9cCbB3FC3215109c7c214c8E02EF91fD3FdEfb8';
 const CHAIN_ID = 2203181;
 
 // Test account
@@ -36,13 +37,13 @@ const greetingContract = new web3.eth.Contract(greetingAbi, greetingContractAddr
 
 (async function init() {
   // destination chain name
-  const destinationChainName = 'PLATONEVMDEV';
+  const destinationChainName = 'TEST1';
 
   // greeting contract action name
   const contractActionName = 'receiveGreeting';
 
   // greeting contract destination action name
-  const destContractActionName = '0xcc9beeb9';
+  const destContractActionName = '0x2d436822';
 
   // Get current date
   function getCurrentDate() {
