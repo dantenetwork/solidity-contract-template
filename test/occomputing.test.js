@@ -59,7 +59,12 @@ contract('OCComputing', function(accounts) {
         it('should execute successfully', async () => {
             let to = OCComputing.address;
             let action = '0x1db89088';
-            let calldata = '0x00';
+            let item = {
+                name: 'nums',
+                msgType: 14,
+                value: '0x00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000001400000000000000000000000000000000000000000000000000000000000000006504c41544f4e000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000094772656574696e6773000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000144772656574696e672066726f6d20504c41544f4e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000374d6f6e204a756e20323720323032322031363a33343a323820474d542b3038303020284368696e61205374616e646172642054696d6529000000000000000000',
+            };
+            let calldata = {items: [item]};
             let argument = [1, 'PLATONEVMDEV', OCComputing.address, owner, [0], to, action, calldata, [0, '0x11111111'], 0];
             await crossChain.receiveMessage(argument, {from: user1});
             await crossChain.executeMessage('PLATONEVMDEV', 1);
@@ -71,9 +76,14 @@ contract('OCComputing', function(accounts) {
     describe('Receive OC Computing Task Callback', function() {
         it('should execute successfully', async () => {
             let to = OCComputing.address;
-            let action = '0xdb1b3c7f';
-            let calldata = '0x00';
-            let argument = [2, 'PLATONEVMDEV', OCComputing.address, owner, [0], to, action, calldata, [0, '0x11111111'], 0];
+            let action = '0x7fac1127';
+            let item = {
+                name: 'result',
+                msgType: 3,
+                value: '0x000000000000000000000000000000000000000000000000000000000000000c',
+            };
+            let calldata = {items: [item]};
+            let argument = [2, 'PLATONEVMDEV', OCComputing.address, owner, [0], to, action, calldata, [1, '0x11111111'], 0];
             await crossChain.receiveMessage(argument, {from: user1});
             await crossChain.executeMessage('PLATONEVMDEV', 2);
             let context = await crossChain.currentSimplifiedMessage();
