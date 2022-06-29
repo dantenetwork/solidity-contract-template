@@ -31,12 +31,6 @@ contract Greetings is ContractBase {
     // Store greetings
     mapping(uint256 => Greeting) public greetings;
 
-    // Outsourcing computing result
-    uint256 public ocResult;
-
-    // Store context of cross chain contract
-    // SimplifiedMessage public context;
-
     /**
      * Receive greeting info from other chains
      * @param _payload - payload which contains greeting message
@@ -52,15 +46,15 @@ contract Greetings is ContractBase {
         // verify sqos
         require(context.sqos.reveal == 1, "SQoS invalid!");
 
-        // verify the sender from the registered chain
-        mapping(bytes4 => string)
-            storage permittedContract = permittedContractMap[context.fromChain];
+        // // verify the sender from the registered chain
+        // mapping(bytes4 => string)
+        //     storage permittedContract = permittedContractMap[context.fromChain];
 
-        require(
-            keccak256(bytes(permittedContract[context.action])) ==
-                keccak256(bytes(context.sender)),
-            "message sender is not registered!"
-        );
+        // require(
+        //     keccak256(bytes(permittedContract[context.action])) ==
+        //         keccak256(bytes(context.sender)),
+        //     "message sender is not registered!"
+        // );
 
         (string[] memory _value) = abi.decode(_payload.items[0].value, (string[]));
         Greeting memory _greeting = Greeting(_value[0], _value[1], _value[2], _value[3]);
@@ -82,6 +76,7 @@ contract Greetings is ContractBase {
 
         // Construct payload
         Payload memory data;
+        data.items = new PayloadItem[](1);
         PayloadItem memory item = data.items[0];
         item.name = "greeting";
         item.msgType = MsgType.EvmStringArray;
