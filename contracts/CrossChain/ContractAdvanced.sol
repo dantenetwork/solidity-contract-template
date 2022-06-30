@@ -34,13 +34,14 @@ contract ContractAdvanced is ContractBase {
      * @param _funcName - destination contract function name
      * @param _sqos - security parameters
      * @param _data - cross chain data
+     * @param _callback - selector of callback method
      */
     function crossChainCall(string memory _destnChainName, string memory _destnContractName,
-        string memory _funcName, SQOS memory _sqos, Payload memory _data) internal returns (uint256) {
+        string memory _funcName, SQOS memory _sqos, Payload memory _data, bytes4 _callback) internal returns (uint256) {
         ISentMessage memory message;
         message.toChain = _destnChainName;
         message.sqos = _sqos;
-        message.session = Session(0, bytes4(""));
+        message.session = Session(0, bytes.concat(_callback));
         message.content = Content(_destnContractName, _funcName, _data);
         return crossChainContract.sendMessage(message);
     }
@@ -60,8 +61,8 @@ contract ContractAdvanced is ContractBase {
         ISentMessage memory message;
         message.toChain = context.fromChain;
         message.sqos = _sqos;
-        message.session = Session(context.id, bytes4(""));
-        message.content = Content(context.sender, string(bytes.concat(context.session.callback)), _data);
+        message.session = Session(context.id, "");
+        message.content = Content(context.sender, string(context.session.callback), _data);
         return crossChainContract.sendMessage(message);
     }
 }

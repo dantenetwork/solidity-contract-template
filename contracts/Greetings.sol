@@ -85,7 +85,7 @@ contract Greetings is ContractBase {
         ISentMessage memory message;
         message.toChain = _toChain;
         message.sqos = SQOS(1);
-        message.session = Session(0, bytes4(""));
+        message.session = Session(0, "");
         message.content = Content(destnContract.contractAddress, destnContract.funcName, data);
 
         crossChainContract.sendMessage(message);

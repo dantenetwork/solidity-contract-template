@@ -53,7 +53,8 @@ contract OCComputing is ContractAdvanced {
             destnContract.contractAddress,
             destnContract.funcName,
             sqos,
-            data
+            data,
+            OCComputing.receiveComputeTaskCallback.selector
         );
         cachedData[id] = _nums;
     }
