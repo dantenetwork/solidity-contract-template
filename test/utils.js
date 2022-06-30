@@ -23,6 +23,21 @@ const expectThrow = async (promise, message) => {
     assert.fail("Expected throw not received");
 };
 
+function toHexString(byteArray) {
+    return '0x' + Array.from(byteArray, function(byte) {
+        return ('0' + (byte & 0xFF).toString(16)).slice(-2);
+    }).join('')
+}
+
+// Convert normal string to u8 array
+function stringToByteArray(str) {
+    return Array.from(str, function(byte) {
+        return byte.charCodeAt(0);
+    });
+}
+
 module.exports = {
-    expectThrow: expectThrow
+    expectThrow: expectThrow,
+    toHexString: toHexString,
+    stringToByteArray: stringToByteArray
 }
