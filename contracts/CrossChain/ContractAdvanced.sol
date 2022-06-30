@@ -6,23 +6,6 @@ import "./ContractBase.sol";
 contract ContractAdvanced is ContractBase {
     mapping(bytes32 => string) public callbackAbis;
 
-    /**
-     * Callback ABI used to decode data responded by other chain
-     * @param _destnChainName - destination chain name
-     * @param _destnContractName - destination contract name
-     * @param _funcName - destination contract function name
-     * @param _callbackAbi - data abi
-     */
-    function registerCallbackAbi(
-        string calldata _destnChainName,
-        string calldata _destnContractName,
-        string calldata _funcName,
-        string calldata _callbackAbi
-    ) external onlyOwner {
-        bytes32 hash = keccak256(abi.encodePacked(_destnChainName, _destnContractName, _funcName));
-        callbackAbis[hash] = _callbackAbi;
-    }
-
     ///////////////////////////////////////////////
     /////  Cross-chain call to other chains  //////
     ///////////////////////////////////////////////
