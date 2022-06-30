@@ -35,11 +35,10 @@ contract ContractAdvanced is ContractBase {
 
     /**
      * Cross chain respond
-     * @param _funcName - destination contract function name
      * @param _sqos - security parameters
      * @param _data - cross chain data
      */
-    function crossChainRespond(string memory _funcName, SQOS memory _sqos, Payload memory _data) internal returns (uint256) {
+    function crossChainRespond(SQOS memory _sqos, Payload memory _data) internal returns (uint256) {
         SimplifiedMessage memory context = getContext();
         ISentMessage memory message;
         message.toChain = context.fromChain;

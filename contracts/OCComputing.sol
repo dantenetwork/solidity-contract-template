@@ -78,12 +78,6 @@ contract OCComputing is ContractAdvanced {
             ret += _nums[i];
         }
 
-        // send result back
-        SimplifiedMessage memory context = getContext();
-        mapping(string => DestnContract) storage map = destnContractMap[context.fromChain];
-        DestnContract storage destnContract = map["receiveComputeTaskCallback"];
-        require(destnContract.used, "action not registered");
-
         // Construct payload
         Payload memory data;
         data.items = new PayloadItem[](1);
@@ -92,7 +86,7 @@ contract OCComputing is ContractAdvanced {
         item.msgType = MsgType.EvmU32;
         item.value = abi.encode(ret);
         SQOS memory sqos = SQOS(0);
-        crossChainRespond(destnContract.funcName, sqos, data);
+        crossChainRespond(sqos, data);
     }
 
     /**
