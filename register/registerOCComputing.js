@@ -1,50 +1,104 @@
 const Web3 = require('web3');
 const fs = require('fs');
 const ethereum = require('./ethereum');
+const { program } = require('commander');
+const config = require('config');
 
-// const web3 = new Web3('https://api.avax-test.network/ext/bc/C/rpc');
-const web3 = new Web3('wss://devnetopenapi2.platon.network/ws');
-// web3.eth.handleRevert = true;
-// const web3 = new Web3('https://data-seed-prebsc-1-s1.binance.org:8545');
-// const web3 = new Web3('wss://rinkeby.infura.io/ws/v3/94ebec44ffc34501898dd5dccf387f81');
-const crossChainContractAddress = '0x4E6D2E51e153BC2a80c2947AF868e9A1A0789913';
-const nearOCContractAddress = 'a7d1736372266477e0d0295d34ae47622ba50d007031a009976348f954e681fe';
-const POLKADOT = "5F3Lp5H5bJavW6YYi3aKbYJqdJQHPiNQo4WzujVeXKv9wd5N";
-const SHIBUYA = "5D6gvY4fsUsjkQcPnHtxRTy72CxC12RzFzXHknaZDts2sX2T";
-const destOSComputingContractAddress = '0xe55eDA7Ab7eCD2ce2c55cdf938488b462F7a5c0A';
-const CHAIN_ID = 2203181;
+let web3;
+let netConfig;
+let contract;
 
-// Test account
-let testAccountPrivateKey = fs.readFileSync('.secret').toString();
+const ABI_PATH = './build/contracts/Greetings.json';
+const CONTRACT_KEY_NAME = 'computingContractAddress';
+const METHOD_KEY_NAME = 'receiveComputingTask';
 
-// OC smart contract address
-const address = fs.readFileSync('./build/oc.json');
-const contractAddress = JSON.parse(address).OCContractAddress;
+// Private key
+let testAccountPrivateKey = fs.readFileSync('./.secret').toString();
 
-// Load contract abi, and init oc contract object
-const ocRawData = fs.readFileSync('./build/contracts/OCComputing.json');
-const ocAbi = JSON.parse(ocRawData).abi;
-const ocContract = new web3.eth.Contract(ocAbi, contractAddress);
+function init(chainName) {
+    netConfig = config.get(chainName);
+    if (!netConfig) {
+        console.log('Config of chain (' + chainName + ') not exists');
+        return false;
+    }
 
-(async function init() {
-  // destination chain name
-  const destinationChainName = 'PLATONEVMDEV';
+    // Load contract abi, and init contract object
+    const contractRawData = fs.readFileSync(ABI_PATH);
+    const contractAbi = JSON.parse(contractRawData).abi;
 
-  // OCComputing contract action name
-  const receiveTaskActionName = 'receiveComputeTask';
-  const receiveResultActionName = 'receiveComputeTaskCallback';
+    web3 = new Web3(netConfig.nodeAddress);
+    web3.eth.handleRevert = true;
+    contract = new web3.eth.Contract(contractAbi, netConfig[CONTRACT_KEY_NAME]);
 
-  // OCComputing contract destination action name
-  const destReceiveTaskActionName = '0x47e50a42';
-  const destReceiveResultActionName = '0x7fac1127';
+    return true;
+}
 
+async function initialize() {
   // Set cross chain contract address
-  // await ethereum.sendTransaction(web3, CHAIN_ID, ocContract, 'setCrossChainContract', testAccountPrivateKey, [crossChainContractAddress]);
-  // Register contract info for sending messages to other chains
-  // await ethereum.sendTransaction(web3, CHAIN_ID, ocContract, 'registerDestnContract', testAccountPrivateKey, [receiveTaskActionName, destinationChainName, destOSComputingContractAddress, destReceiveTaskActionName]);
-  // await ethereum.sendTransaction(web3, CHAIN_ID, ocContract, 'registerDestnContract', testAccountPrivateKey, [receiveResultActionName, destinationChainName, destOSComputingContractAddress, destReceiveResultActionName]);
+  await ethereum.sendTransaction(web3, netConfig.chainId, contract, 'setCrossChainContract', testAccountPrivateKey, [netConfig.crossChainContractAddress]);
+}
 
-  // await ethereum.sendTransaction(web3, CHAIN_ID, ocContract, 'sendComputeTask', testAccountPrivateKey, [destinationChainName, [10,31,30]]);
-  let a = await ethereum.contractCall(ocContract, 'ocResult', [1]);
-  console.log('a', a);
+async function registerDestnContract(chainName) {
+  let destConfig = config.get(chainName);
+  if (!destConfig) {
+      console.log('Config of dest chain (' + chainName + ') not exists');
+      return false;
+  }
+
+  const interface = JSON.parse(fs.readFileSync('./config/interface.json'));
+  if (!interface[destConfig.interface]) {
+    console.log('Interface of dest chain (' + chainName + ') not exists');
+    return false;
+  }
+
+  // Register contract info for sending messages to other chains
+  await ethereum.sendTransaction(web3, netConfig.chainId, contract, 'registerDestnContract',testAccountPrivateKey,
+    [METHOD_KEY_NAME, chainName, destConfig[CONTRACT_KEY_NAME], interface[destConfig.interface][METHOD_KEY_NAME]]);
+}
+
+async function sendComputingTask(toChain, nums) {
+  await ethereum.sendTransaction(web3, netConfig.chainId, contract, 'sendComputeTask', testAccountPrivateKey,
+    [toChain, nums]);
+}
+
+(async function () {
+  function list(val) {
+  return val.split(',')
+}
+
+  program
+      .version('0.1.0')
+      .option('-i, --initialize <chain name>', 'Initialize greeting contract')
+      .option('-r, --register <chain name, dest chain name>', 'Register destination chain contract', list)
+      .option('-s, --send <chain name, dest chain name, num list>', 'Send greeting message')
+      .parse(process.argv);
+
+  if (program.opts().initialize) {
+      if (!init(program.opts().initialize)) {
+          return;
+      }
+      await initialize();
+  }
+  else if (program.opts().register) {
+      if (program.opts().register.length != 2) {
+          console.log('2 arguments are needed, but ' + program.opts().register.length + ' provided');
+          return;
+      }
+      
+      if (!init(program.opts().register[0])) {
+          return;
+      }
+      await registerDestnContract(program.opts().register[1]);
+  }
+  else if (program.opts().send) {
+    if (program.opts().send.length != 3) {
+        console.log('3 arguments are needed, but ' + program.opts().send.length + ' provided');
+        return;
+    }
+
+    if (!init(program.opts().send[0])) {
+        return;
+    }
+    await sendComputingTask(program.opts().send[1], program.opts().send[2]);
+  }
 }());

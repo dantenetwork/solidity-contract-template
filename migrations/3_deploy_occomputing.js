@@ -1,7 +1,7 @@
 const OCComputing = artifacts.require("OCComputing");
 const fs = require("fs");
 
-module.exports = async function (deployer) {
+module.exports = async function (deployer, network) {
   await deployer.deploy(OCComputing);
   
   if (network.indexOf('-fork') != -1) {
@@ -16,6 +16,6 @@ module.exports = async function (deployer) {
     jsonData[network] = {};
   }
 
-  jsonData[network].computingContractAddress = Greetings.address;
+  jsonData[network].computingContractAddress = OCComputing.address;
   fs.writeFileSync(contractAddressFile, JSON.stringify(jsonData, null, '\t'));
 };

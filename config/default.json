@@ -2,29 +2,43 @@
 	"FUJI": {
 		"nodeAddress": "https://api.avax-test.network/ext/bc/C/rpc",
 		"crossChainContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
-        "greetingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
-        "computingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
-		"chainId": 43113
+		"greetingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
+		"computingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
+		"chainId": 43113,
+		"interface": "EVM"
 	},
 	"BSCTEST": {
 		"nodeAddress": "https://data-seed-prebsc-1-s1.binance.org:8545",
 		"crossChainContractAddress": "0x5950b420377Ac8128485D54307762FC952e14CD4",
-        "greetingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
-        "computingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
-		"chainId": 97
+		"greetingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
+		"computingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
+		"chainId": 97,
+		"interface": "EVM"
 	},
 	"RINKEBY": {
 		"nodeAddress": "https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
-        "greetingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
-        "computingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
 		"crossChainContractAddress": "0x359d5510405093f7Ea15408a0A3F52c52730A77e",
-		"chainId": 4
+		"greetingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
+		"computingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
+		"chainId": 4,
+		"interface": "EVM"
 	},
 	"PLATONEVMDEV": {
 		"nodeAddress": "http://35.247.155.162:6789",
 		"crossChainContractAddress": "0xA768Ed8CF4DeEE3Ff11e9fC8192F905D2FEa7313",
-        "greetingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
-        "computingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
-		"chainId": 210309
+		"greetingContractAddress": "0xb8732640D89BdeF45784B75321510313E0782AB2",
+		"computingContractAddress": "0xeeB88e70A0930a807250dD6a473bbB4B05A46310",
+		"chainId": 210309,
+		"interface": "EVM"
+	},
+	"NEARTEST": {
+		"crossChainContractAddress": "0xA768Ed8CF4DeEE3Ff11e9fC8192F905D2FEa7313",
+		"greetingContractAddress": "0xb8732640D89BdeF45784B75321510313E0782AB2",
+		"interface": "NEAR"
+	},
+	"ASTAR": {
+		"crossChainContractAddress": "0xA768Ed8CF4DeEE3Ff11e9fC8192F905D2FEa7313",
+		"greetingContractAddress": "0xb8732640D89BdeF45784B75321510313E0782AB2",
+		"interface": "INK"
 	}
 }

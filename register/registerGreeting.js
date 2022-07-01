@@ -1,65 +1,110 @@
 const Web3 = require('web3');
 const fs = require('fs');
 const ethereum = require('./ethereum');
+const { program } = require('commander');
+const config = require('config');
 
-/*
-Test1:
-Greeting: 0x42E64FE066CDe431F0EbEB53a77f427F5f0D87d8
-Computing: 0x79aEb29541cCba967C75133588371f34bA739721
-PlatON:
-Greeting: 0x44fb65cFbA6c07d91d71031A3dACaa8C93a73Df5
-Computing: 0xe55eDA7Ab7eCD2ce2c55cdf938488b462F7a5c0A
-*/
+let web3;
+let netConfig;
+let contract;
 
-// const web3 = new Web3('https://api.avax-test.network/ext/bc/C/rpc');
-const web3 = new Web3('wss://devnetopenapi2.platon.network/ws');
-web3.eth.handleRevert = true;
-// const web3 = new Web3('https://data-seed-prebsc-1-s1.binance.org:8545');
-// const web3 = new Web3('wss://rinkeby.infura.io/ws/v3/94ebec44ffc34501898dd5dccf387f81');
-const crossChainContractAddress = '0x4E6D2E51e153BC2a80c2947AF868e9A1A0789913';
-const nearGreetingContractAddress = '9f9350eb575cae7aac7f85a8c62b08d94dcac70a84e3c765464ff87c669fa4e5';
-// const POLKADOT = "5CBD313ffFKkibotMZGMJpFpFshL237Lfv1rrsoj5qGrgQTz";
-const SHIBUYA = "5CqHgtxcuqhng95pxXvS25hBCPXNv9wKhvSktK7SgtDPjBTd";
-const destGreetingContractAddress = '0x44fb65cFbA6c07d91d71031A3dACaa8C93a73Df5';
-const CHAIN_ID = 2203181;
+const ABI_PATH = './build/contracts/Greetings.json';
+const CONTRACT_KEY_NAME = 'greetingContractAddress';
+const METHOD_KEY_NAME = 'receiveGreeting';
 
-// Test account
-let testAccountPrivateKey = fs.readFileSync('.secret').toString();
+// Private key
+let testAccountPrivateKey = fs.readFileSync('./.secret').toString();
 
-// Greeting smart contract address
-const address = fs.readFileSync('./build/address.json');
-const greetingContractAddress = JSON.parse(address).greetingsContractAddress;
+// Get current date
+function getCurrentDate() {
+  var today = new Date();
+  return today.toString();
+}
 
-// Load contract abi, and init greeting contract object
-const greetingRawData = fs.readFileSync('./build/contracts/Greetings.json');
-const greetingAbi = JSON.parse(greetingRawData).abi;
-const greetingContract = new web3.eth.Contract(greetingAbi, greetingContractAddress);
+function init(chainName) {
+    netConfig = config.get(chainName);
+    if (!netConfig) {
+        console.log('Config of chain (' + chainName + ') not exists');
+        return false;
+    }
 
-(async function init() {
-  // destination chain name
-  const destinationChainName = 'PLATONEVMDEV';
+    // Load contract abi, and init contract object
+    const contractRawData = fs.readFileSync(ABI_PATH);
+    const contractAbi = JSON.parse(contractRawData).abi;
 
-  // greeting contract action name
-  const contractActionName = 'receiveGreeting';
+    web3 = new Web3(netConfig.nodeAddress);
+    web3.eth.handleRevert = true;
+    contract = new web3.eth.Contract(contractAbi, netConfig[CONTRACT_KEY_NAME]);
 
-  // greeting contract destination action name
-  const destContractActionName = '0x2d436822';
+    return true;
+}
 
-  // Get current date
-  function getCurrentDate() {
-    var today = new Date();
-    return today.toString();
+async function initialize() {
+  // Set cross chain contract address
+  await ethereum.sendTransaction(web3, netConfig.chainId, contract, 'setCrossChainContract', testAccountPrivateKey, [netConfig.crossChainContractAddress]);
+}
+
+async function registerDestnContract(chainName) {
+  let destConfig = config.get(chainName);
+  if (!destConfig) {
+      console.log('Config of dest chain (' + chainName + ') not exists');
+      return false;
   }
 
-  // Set cross chain contract address
-  // await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'setCrossChainContract', testAccountPrivateKey, [crossChainContractAddress]);
-  // Register contract info for sending messages to other chains
-  // await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'registerDestnContract', testAccountPrivateKey, [contractActionName, destinationChainName, destGreetingContractAddress, destContractActionName]);
+  const interface = JSON.parse(fs.readFileSync('./config/interface.json'));
+  if (!interface[destConfig.interface]) {
+    console.log('Interface of dest chain (' + chainName + ') not exists');
+    return false;
+  }
 
-  // await ethereum.sendTransaction(web3, CHAIN_ID, greetingContract, 'sendGreeting', testAccountPrivateKey, [destinationChainName, ['PLATON', 'Greetings', 'Greeting from PLATON', getCurrentDate()]]);
-  let a = await ethereum.contractCall(greetingContract, 'greetings', [2]);
-  // let a = await ethereum.contractCall(greetingContract, 'verify', [destinationChainName, contractActionName, destGreetingContractAddress]);
-  // let a = await ethereum.contractCall(greetingContract, 'permittedContractMap', [destinationChainName, contractActionName]);
-  // let a = await ethereum.contractCall(greetingContract, 'crossChainContract', []);
-  console.log(a)
+  // Register contract info for sending messages to other chains
+  await ethereum.sendTransaction(web3, netConfig.chainId, contract, 'registerDestnContract',testAccountPrivateKey,
+    [METHOD_KEY_NAME, chainName, destConfig[CONTRACT_KEY_NAME], interface[destConfig.interface][METHOD_KEY_NAME]]);
+}
+
+async function sendGreeting(fromChain, toChain) {
+  await ethereum.sendTransaction(web3, netConfig.chainId, contract, 'sendGreeting', testAccountPrivateKey,
+    [toChain, [fromChain, 'Greetings', 'Greeting from ' + fromChain, getCurrentDate()]]);
+}
+
+(async function () {
+  function list(val) {
+  return val.split(',')
+}
+
+  program
+      .version('0.1.0')
+      .option('-i, --initialize <chain name>', 'Initialize greeting contract')
+      .option('-r, --register <chain name, dest chain name>', 'Register destination chain contract', list)
+      .option('-s, --send <chain name, dest chain name>', 'Send greeting message')
+      .parse(process.argv);
+
+  if (program.opts().initialize) {
+      if (!init(program.opts().initialize)) {
+          return;
+      }
+      await initialize();
+  }
+  else if (program.opts().register) {
+      if (program.opts().register.length != 2) {
+          console.log('2 arguments are needed, but ' + program.opts().register.length + ' provided');
+          return;
+      }
+      
+      if (!init(program.opts().register[0])) {
+          return;
+      }
+      await registerDestnContract(program.opts().register[1]);
+  }
+  else if (program.opts().send) {
+    if (program.opts().send.length != 2) {
+        console.log('2 arguments are needed, but ' + program.opts().send.length + ' provided');
+        return;
+    }
+
+    if (!init(program.opts().send[0])) {
+        return;
+    }
+    await sendGreeting(program.opts().send[0], program.opts().send[1]);
+  }
 }());
