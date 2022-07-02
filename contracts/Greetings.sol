@@ -44,17 +44,7 @@ contract Greetings is ContractBase {
         // `context` used for verify the operation authority
         SimplifiedMessage memory context = getContext();
         // verify sqos
-        require(context.sqos.reveal == 1, "SQoS invalid!");
-
-        // // verify the sender from the registered chain
-        // mapping(bytes4 => string)
-        //     storage permittedContract = permittedContractMap[context.fromChain];
-
-        // require(
-        //     keccak256(bytes(permittedContract[context.action])) ==
-        //         keccak256(bytes(context.sender)),
-        //     "message sender is not registered!"
-        // );
+        // require(context.sqos.reveal == 1, "SQoS invalid!");
 
         (string[] memory _value) = abi.decode(_payload.items[0].value, (string[]));
         Greeting memory _greeting = Greeting(_value[0], _value[1], _value[2], _value[3]);
@@ -84,7 +74,6 @@ contract Greetings is ContractBase {
 
         ISentMessage memory message;
         message.toChain = _toChain;
-        message.sqos = SQOS(1);
         message.session = Session(0, "");
         message.content = Content(destnContract.contractAddress, destnContract.funcName, data);
 

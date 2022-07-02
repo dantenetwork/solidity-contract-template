@@ -47,7 +47,7 @@ contract OCComputing is ContractAdvanced {
         item.msgType = MsgType.EvmU32Array;
         item.value = abi.encode(_nums);
 
-        SQOS memory sqos = SQOS(0);
+        SQoS[] memory sqos;
         uint id = crossChainCall(
             _toChain,
             destnContract.contractAddress,
@@ -85,7 +85,7 @@ contract OCComputing is ContractAdvanced {
         item.name = "result";
         item.msgType = MsgType.EvmU32;
         item.value = abi.encode(ret);
-        SQOS memory sqos = SQOS(0);
+        SQoS[] memory sqos;
         crossChainRespond(sqos, data);
     }
 
