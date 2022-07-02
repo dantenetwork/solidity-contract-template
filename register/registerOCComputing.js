@@ -8,9 +8,9 @@ let web3;
 let netConfig;
 let contract;
 
-const ABI_PATH = './build/contracts/Greetings.json';
+const ABI_PATH = './build/contracts/OCComputing.json';
 const CONTRACT_KEY_NAME = 'computingContractAddress';
-const METHOD_KEY_NAME = 'receiveComputingTask';
+const METHOD_KEY_NAME = 'receiveComputeTask';
 
 // Private key
 let testAccountPrivateKey = fs.readFileSync('./.secret').toString();
@@ -61,16 +61,21 @@ async function sendComputingTask(toChain, nums) {
     [toChain, nums]);
 }
 
+async function getOCResult(id) {
+  return await ethereum.contractCall(contract, 'ocResult', [id]);
+}
+
 (async function () {
   function list(val) {
-  return val.split(',')
-}
+    return val.split(',')
+  }
 
   program
       .version('0.1.0')
       .option('-i, --initialize <chain name>', 'Initialize greeting contract')
       .option('-r, --register <chain name, dest chain name>', 'Register destination chain contract', list)
-      .option('-s, --send <chain name, dest chain name, num list>', 'Send greeting message')
+      .option('-s, --send <chain name, dest chain name, num list>', 'Send greeting message', list)
+      .option('-g, --get <chain name, id>', 'Get computing result', list)
       .parse(process.argv);
 
   if (program.opts().initialize) {
@@ -99,6 +104,20 @@ async function sendComputingTask(toChain, nums) {
     if (!init(program.opts().send[0])) {
         return;
     }
-    await sendComputingTask(program.opts().send[1], program.opts().send[2]);
+
+    let nums = program.opts().send[2].split('|');
+    await sendComputingTask(program.opts().send[1], nums);
+  }
+  else if (program.opts().get) {
+    if (program.opts().get.length != 2) {
+        console.log('2 arguments are needed, but ' + program.opts().get.length + ' provided');
+        return;
+    }
+
+    if (!init(program.opts().get[0])) {
+        return;
+    }
+    let result = await getOCResult(program.opts().get[1]);
+    console.log('result', result);
   }
 }());

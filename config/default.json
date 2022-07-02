@@ -25,9 +25,9 @@
 	},
 	"PLATONEVMDEV": {
 		"nodeAddress": "http://35.247.155.162:6789",
-		"crossChainContractAddress": "0xA768Ed8CF4DeEE3Ff11e9fC8192F905D2FEa7313",
-		"greetingContractAddress": "0xb8732640D89BdeF45784B75321510313E0782AB2",
-		"computingContractAddress": "0xeeB88e70A0930a807250dD6a473bbB4B05A46310",
+		"crossChainContractAddress": "0xF53BbB33f5FB9769aCA0287cEdfD20A0D5a70Fe3",
+		"greetingContractAddress": "0xF33E1dcD869a52089E3E85B8094993E54537058a",
+		"computingContractAddress": "0xcEebD2bAc28efe08a0C6edB9aA8D1c71B196aC67",
 		"chainId": 210309,
 		"interface": "EVM"
 	},

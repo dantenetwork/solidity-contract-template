@@ -1,7 +1,7 @@
 {
 	"EVM": {
         "receiveGreeting": "0x2d436822",
-        "receiveComputingTask": "0x47e50a42",
+        "receiveComputeTask": "0x47e50a42",
         "receiveComputeTaskCallback": "0x7fac1127"
 	},
 	"NEAR": {

@@ -67,16 +67,21 @@ async function sendGreeting(fromChain, toChain) {
     [toChain, [fromChain, 'Greetings', 'Greeting from ' + fromChain, getCurrentDate()]]);
 }
 
+async function getGreeting(id) {
+  return await ethereum.contractCall(contract, 'greetings', [id]);
+}
+
 (async function () {
   function list(val) {
-  return val.split(',')
-}
+    return val.split(',')
+  }
 
   program
       .version('0.1.0')
       .option('-i, --initialize <chain name>', 'Initialize greeting contract')
       .option('-r, --register <chain name, dest chain name>', 'Register destination chain contract', list)
-      .option('-s, --send <chain name, dest chain name>', 'Send greeting message')
+      .option('-s, --send <chain name, dest chain name>', 'Send greeting message', list)
+      .option('-g, --get <chain name, id>', 'Get greeting message', list)
       .parse(process.argv);
 
   if (program.opts().initialize) {
@@ -106,5 +111,17 @@ async function sendGreeting(fromChain, toChain) {
         return;
     }
     await sendGreeting(program.opts().send[0], program.opts().send[1]);
+  }
+  else if (program.opts().get) {
+    if (program.opts().get.length != 2) {
+        console.log('2 arguments are needed, but ' + program.opts().get.length + ' provided');
+        return;
+    }
+
+    if (!init(program.opts().get[0])) {
+        return;
+    }
+    let greeting = await getGreeting(program.opts().get[1]);
+    console.log('greeting', greeting);
   }
 }());
