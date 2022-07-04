@@ -79,9 +79,9 @@ async function getGreeting(id) {
   program
       .version('0.1.0')
       .option('-i, --initialize <chain name>', 'Initialize greeting contract')
-      .option('-r, --register <chain name, dest chain name>', 'Register destination chain contract', list)
-      .option('-s, --send <chain name, dest chain name>', 'Send greeting message', list)
-      .option('-g, --get <chain name, id>', 'Get greeting message', list)
+      .option('-r, --register <chain name>,<dest chain name>', 'Register destination chain contract', list)
+      .option('-s, --send <chain name>,<dest chain name>', 'Send greeting message', list)
+      .option('-g, --get <chain name>,<id>', 'Get greeting message', list)
       .parse(process.argv);
 
   if (program.opts().initialize) {
