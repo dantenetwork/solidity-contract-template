@@ -4,18 +4,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@hthuang/contracts/interfaces/ICrossChain.sol";
 
 contract ContractBase is Ownable {
-    // Message ABI used to encode/decode messages sent from this contract
-    struct MessageABI {
-        string parametertypes; // action params' type
-        string parameterNames; // action params' name
-    }
-
-    // desination contract action mapping
-    mapping(bytes => MessageABI) public messageABIMap;
-
-    // source contract action mapping
-    mapping(string => string) public contractABIMap;
-
     // Dante cross chain contract
     ICrossChain public crossChainContract;
 
