@@ -57,7 +57,7 @@ contract('Greetings', function(accounts) {
             let argument = [1, 'PLATONEVMDEV', Greetings.address, owner, [1], to, action, calldata, [0, '0x11111111'], 0];
             await crossChain.receiveMessage(argument, {from: user1});
             await crossChain.executeMessage('PLATONEVMDEV', 1);
-            let context = await crossChain.currentSimplifiedMessage();
+            let context = await crossChain.getCurrentMessage();
             assert(context.id.eq(new BN('1')));
             let g = await greeting.greetings(context.id);
             assert(g.fromChain != '');

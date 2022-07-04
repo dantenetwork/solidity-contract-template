@@ -58,7 +58,7 @@ contract('OCComputing', function(accounts) {
             let argument = [1, 'PLATONEVMDEV', OCComputing.address, owner, [0], to, action, calldata, [0, utils.toHexString(utils.stringToByteArray('0x11111111'))], 0];
             await crossChain.receiveMessage(argument, {from: user1});
             await crossChain.executeMessage('PLATONEVMDEV', 1);
-            let context = await crossChain.currentSimplifiedMessage();
+            let context = await crossChain.getCurrentMessage();
             assert(context.id.eq(new BN('1')));
         });
     });
@@ -76,7 +76,7 @@ contract('OCComputing', function(accounts) {
             let argument = [2, 'PLATONEVMDEV', OCComputing.address, owner, [0], to, action, calldata, [1, '0x11111111'], 0];
             await crossChain.receiveMessage(argument, {from: user1});
             await crossChain.executeMessage('PLATONEVMDEV', 2);
-            let context = await crossChain.currentSimplifiedMessage();
+            let context = await crossChain.getCurrentMessage();
             assert(context.id.eq(new BN('2')));
             let result = await ocComputing.ocResult(1);
             assert(result.result.eq(new BN('12')));
