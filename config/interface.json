@@ -8,6 +8,8 @@
         "receiveGreeting": "receive_greeting"
 	},
 	"INK": {
-        "receiveGreeting": "0x11111111"
+        "receiveGreeting": "0x0c724dc2",
+        "receiveComputeTask": "0xfc796c19",
+        "receiveComputeTaskCallback": "0x609ec10e"
 	}
 }

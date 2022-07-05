@@ -31,6 +31,11 @@
 		"chainId": 210309,
 		"interface": "EVM"
 	},
+	"POLKADOT": {
+		"computingContractAddress": "5CWE7oC9A6zH3gW41LSnRJcvAkvxeYDQeCnUcciDjYPefvGU",
+		"greetingContractAddress": "5GvEonshFDggZM5dyV3sVhuAxz2qFBUoRnvsarmTYNfxsPxC",
+		"interface": "INK"
+	},
 	"NEARTEST": {
 		"computingContractAddress": "0xA768Ed8CF4DeEE3Ff11e9fC8192F905D2FEa7313",
 		"greetingContractAddress": "0xb8732640D89BdeF45784B75321510313E0782AB2",
