@@ -29,7 +29,7 @@ contract Greetings is ContractBase {
     mapping(string => mapping(bytes4 => string)) public permittedContractMap;
 
     // Store greetings
-    mapping(uint256 => Greeting) public greetings;
+    mapping(string => mapping(uint256 => Greeting)) public greetings;
 
     /**
      * Receive greeting info from other chains
@@ -48,7 +48,7 @@ contract Greetings is ContractBase {
 
         (string[] memory _value) = abi.decode(_payload.items[0].value, (string[]));
         Greeting memory _greeting = Greeting(_value[0], _value[1], _value[2], _value[3]);
-        greetings[context.id] = _greeting;
+        greetings[context.fromChain][context.id] = _greeting;
     }
 
     /**

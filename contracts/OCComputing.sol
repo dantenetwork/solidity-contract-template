@@ -27,7 +27,7 @@ contract OCComputing is ContractAdvanced {
     // Outsourcing computing data cache
     mapping(uint256 => uint256[]) cachedData;
     // Outsourcing computing result
-    mapping(uint256 => OCResult) public ocResult;
+    mapping(string => mapping(uint256 => OCResult)) public ocResult;
     
     /**
      * Send outsourcing computing task to other chain
@@ -100,7 +100,7 @@ contract OCComputing is ContractAdvanced {
 
         (uint32 _result) = abi.decode(_payload.items[0].value, (uint32));
         SimplifiedMessage memory context = getContext();
-        OCResult storage result = ocResult[context.session.id];
+        OCResult storage result = ocResult[context.fromChain][context.session.id];
         result.used = true;
         result.result = _result;
     }
