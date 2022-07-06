@@ -1,15 +1,14 @@
 {
 	"EVM": {
         "receiveGreeting": "0x2d436822",
-        "receiveComputeTask": "0x47e50a42",
-        "receiveComputeTaskCallback": "0x7fac1127"
+        "receiveComputeTask": "0x47e50a42"
 	},
 	"NEAR": {
-        "receiveGreeting": "receive_greeting"
+        "receiveGreeting": "receive_greeting",
+        "receiveComputeTask": "receive_compute_task"
 	},
 	"INK": {
         "receiveGreeting": "0x0c724dc2",
-        "receiveComputeTask": "0xfc796c19",
-        "receiveComputeTaskCallback": "0x609ec10e"
+        "receiveComputeTask": "0x00000001"
 	}
 }
