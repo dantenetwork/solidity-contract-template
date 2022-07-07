@@ -63,7 +63,7 @@ module.exports = {
     },
     // Moonbeam testnet
     MOONBASEALPHA: {
-      provider: () => new HDWalletProvider(mnemonic, `https://moonbase-alpha.public.blastapi.io`),
+      provider: () => new HDWalletProvider(mnemonic, `wss://moonbeam-alpha.api.onfinality.io/public-ws`),
       network_id: "*",       // Any network (default: none)
     },
   },

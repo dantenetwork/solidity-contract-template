@@ -2,8 +2,8 @@
 	"FUJI": {
 		"nodeAddress": "https://api.avax-test.network/ext/bc/C/rpc",
 		"crossChainContractAddress": "0x8177cBe1c9a0B08B536C55097b569dfaEc5cb520",
-		"greetingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
-		"computingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
+		"greetingContractAddress": "0x1723f39e05Ca8b14ACaf244bAFFBd79801d42A63",
+		"computingContractAddress": "0x7F5b6F5F7a786F63383E8681Da7ACCEed76Ab209",
 		"chainId": 43113,
 		"interface": "EVM"
 	},
