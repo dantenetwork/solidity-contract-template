@@ -1,7 +1,7 @@
 {
 	"FUJI": {
 		"nodeAddress": "https://api.avax-test.network/ext/bc/C/rpc",
-		"crossChainContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
+		"crossChainContractAddress": "0x8177cBe1c9a0B08B536C55097b569dfaEc5cb520",
 		"greetingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
 		"computingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
 		"chainId": 43113,
@@ -25,20 +25,32 @@
 	},
 	"PLATONEVMDEV": {
 		"nodeAddress": "http://35.247.155.162:6789",
-		"crossChainContractAddress": "0xCf188FB623d3d03AEcF535EF5b673FC8BcF21FB4",
-		"greetingContractAddress": "0x1867761f0B6175978CCaf050619F17B022bbBc22",
-		"computingContractAddress": "0x915d5419FCB0d45AdF410bD467DEeB8e7E44364B",
+		"crossChainContractAddress": "0x5947661057f484BEC375Fb9d53F81973f9202fbc",
+		"greetingContractAddress": "0x61Cd7e3445B80ef24826231d81543D1eEE54e51A",
+		"computingContractAddress": "0x0728E64D9D0f1C15F0799fD3e19607A2e5649c9b",
 		"chainId": 210309,
 		"interface": "EVM"
 	},
+	"MOONBASEALPHA": {
+		"nodeAddress": "https://rpc.api.moonbase.moonbeam.network",
+		"crossChainContractAddress": "0x197D00ff70372A48c10cAe8205680c9a9f5F8370",
+		"greetingContractAddress": "0x61Cd7e3445B80ef24826231d81543D1eEE54e51A",
+		"computingContractAddress": "0x0728E64D9D0f1C15F0799fD3e19607A2e5649c9b",
+		"chainId": 1287
+	},
 	"POLKADOT": {
-		"computingContractAddress": "5CWE7oC9A6zH3gW41LSnRJcvAkvxeYDQeCnUcciDjYPefvGU",
-		"greetingContractAddress": "5GvEonshFDggZM5dyV3sVhuAxz2qFBUoRnvsarmTYNfxsPxC",
+		"computingContractAddress": "5CrMwAYTertsvXotJjLuib6Ah8y71Pvj2Sfor55dW5HZi1zp",
+		"greetingContractAddress": "5Dw2hNmuM5abuRJ5ruVXdguTUNkv8Ljmuje4hUzcU6tx3gYS",
+		"interface": "INK"
+	},
+	"SHIBUYA": {
+		"computingContractAddress": "ZakeYTFPNkC9Cgceui2aBZ6G23nA6ieB3KVWfmdNDv6UfM1",
+		"greetingContractAddress": "a1mydsZDKLQJh8mwB1NZ86XVJ8ApiyNVWikMrhoLwoGfZex",
 		"interface": "INK"
 	},
 	"NEARTEST": {
-		"computingContractAddress": "0xA768Ed8CF4DeEE3Ff11e9fC8192F905D2FEa7313",
-		"greetingContractAddress": "0xb8732640D89BdeF45784B75321510313E0782AB2",
+		"computingContractAddress": "f738bf496d14e9c2d4b734be2905a319253a7cc5775511434991b9f212224aab",
+		"greetingContractAddress": "99ff32da92227f302056389ce208d77e12f88a6ffd2cee1b238586cc4cc20bd7",
 		"interface": "NEAR"
 	},
 	"ASTAR": {

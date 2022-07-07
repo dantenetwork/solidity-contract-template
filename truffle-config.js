@@ -60,7 +60,12 @@ module.exports = {
     RINKEBY: {
       provider: () => new HDWalletProvider(mnemonic, `wss://rinkeby.infura.io/ws/v3/94ebec44ffc34501898dd5dccf387f81`),
       network_id: "*",       // Any network (default: none)
-    }
+    },
+    // Moonbeam testnet
+    MOONBASEALPHA: {
+      provider: () => new HDWalletProvider(mnemonic, `https://moonbase-alpha.public.blastapi.io`),
+      network_id: "*",       // Any network (default: none)
+    },
   },
   // Configure your compilers
   compilers: {
