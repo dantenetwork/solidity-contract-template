@@ -36,7 +36,8 @@
 		"crossChainContractAddress": "0x197D00ff70372A48c10cAe8205680c9a9f5F8370",
 		"greetingContractAddress": "0xC0F1706106D2d7208C6586d1C8Aec520d99E9F14",
 		"computingContractAddress": "0x711cb9B41Ae7862b5961a134703Cd6B5f16dAdF5",
-		"chainId": 1287
+		"chainId": 1287,
+		"interface": "EVM"
 	},
 	// "POLKADOT": {
 	// 	"computingContractAddress": "5CrMwAYTertsvXotJjLuib6Ah8y71Pvj2Sfor55dW5HZi1zp",
