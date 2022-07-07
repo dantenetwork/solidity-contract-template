@@ -1,14 +1,21 @@
 const OCComputing = artifacts.require("OCComputing");
 const fs = require("fs");
 
-module.exports = async function (deployer) {
+module.exports = async function (deployer, network) {
   await deployer.deploy(OCComputing);
-  console.log('OCComputing contract address: ' + OCComputing.address);
+  
+  if (network.indexOf('-fork') != -1) {
+    return;
+  }
+  
+  const contractAddressFile = './config/default.json';
+  let data = fs.readFileSync(contractAddressFile, 'utf8');
+  let jsonData = JSON.parse(data);
+  if (!jsonData[network]) {
+    console.warn('There is no config for: ', network, ', please add.');
+    jsonData[network] = {};
+  }
 
-  // generating address.json
-  const contractAddressFile = './build/oc.json';
-  const contractAddress = {
-    'OCContractAddress': OCComputing.address
-  };
-  fs.writeFileSync(contractAddressFile, JSON.stringify(contractAddress));
+  jsonData[network].computingContractAddress = OCComputing.address;
+  fs.writeFileSync(contractAddressFile, JSON.stringify(jsonData, null, '\t'));
 };

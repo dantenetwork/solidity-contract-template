@@ -26,24 +26,16 @@ contract Greetings is ContractBase {
     mapping(string => mapping(string => DestnContract)) public destnContractMap;
 
     // Cross-chain permitted contract map
-    mapping(string => mapping(string => string)) public permittedContractMap;
+    mapping(string => mapping(bytes4 => string)) public permittedContractMap;
 
     // Store greetings
-    mapping(uint256 => Greeting) public greetings;
-
-    // Outsourcing computing result
-    uint256 public ocResult;
-
-    // Store context of cross chain contract
-    // SimplifiedMessage public context;
+    mapping(string => mapping(uint256 => Greeting)) public greetings;
 
     /**
      * Receive greeting info from other chains
-     * @param _greeting - greeting sent from other chain
+     * @param _payload - payload which contains greeting message
      */
-    function receiveGreeting(
-        Greeting calldata _greeting
-    ) public {
+    function receiveGreeting(Payload calldata _payload) public {
         require(
             msg.sender == address(crossChainContract),
             "Locker: caller is not CrossChain"
@@ -52,19 +44,11 @@ contract Greetings is ContractBase {
         // `context` used for verify the operation authority
         SimplifiedMessage memory context = getContext();
         // verify sqos
-        require(context.sqos.reveal == 1, "SQoS invalid!");
+        // require(context.sqos.reveal == 1, "SQoS invalid!");
 
-        // verify the sender from the registered chain
-        mapping(string => string)
-            storage permittedContract = permittedContractMap[context.fromChain];
-
-        require(
-            keccak256(bytes(permittedContract[context.action])) ==
-                keccak256(bytes(context.sender)),
-            "message sender is not registered!"
-        );
-
-        greetings[context.id] = _greeting;
+        (string[] memory _value) = abi.decode(_payload.items[0].value, (string[]));
+        Greeting memory _greeting = Greeting(_value[0], _value[1], _value[2], _value[3]);
+        greetings[context.fromChain][context.id] = _greeting;
     }
 
     /**
@@ -80,78 +64,20 @@ contract Greetings is ContractBase {
         DestnContract storage destnContract = map["receiveGreeting"];
         require(destnContract.used, "action not registered");
 
-        bytes memory data = abi.encode(_greeting);
-        SQOS memory sqos = SQOS(1);
-        crossChainContract.sendMessage(
-            _toChain,
-            destnContract.contractAddress,
-            destnContract.funcName,
-            sqos,
-            data,
-            Session(0, 0)
-        );
-    }
+        // Construct payload
+        Payload memory data;
+        data.items = new PayloadItem[](1);
+        PayloadItem memory item = data.items[0];
+        item.name = "greeting";
+        item.msgType = MsgType.EvmStringArray;
+        item.value = abi.encode(_greeting);
 
-    /**
-     * Send outsourcing computing task to other chain
-     * @param _toChain - to chain name
-     * @param _nums - nums to be accumulated
-     */
-    function sendComputeTask(string calldata _toChain, uint[] calldata _nums) external {
-        mapping(string => DestnContract) storage map = destnContractMap[_toChain];
-        DestnContract storage destnContract = map["receiveComputeTask"];
-        require(destnContract.used, "action not registered");
+        ISentMessage memory message;
+        message.toChain = _toChain;
+        message.session = Session(0, "");
+        message.content = Content(destnContract.contractAddress, destnContract.funcName, data);
 
-        bytes memory data = abi.encode(_nums);
-        SQOS memory sqos = SQOS(0);
-        crossChainContract.sendMessage(
-            _toChain,
-            destnContract.contractAddress,
-            destnContract.funcName,
-            sqos,
-            data,
-            Session(0, 0)
-        );
-    }
-
-    /**
-     * Receives outsourcing computing task from other chain
-     * @param _nums - nums to be accumulated
-     */
-    function receiveComputeTask(uint[] calldata _nums) external {
-        require(
-            msg.sender == address(crossChainContract),
-            "Locker: caller is not CrossChain"
-        );
-        
-        // compute
-        uint ret = 0;
-        for (uint i = 0; i < _nums.length; i++) {
-            ret += _nums[i];
-        }
-
-        SimplifiedMessage memory context = getContext();
-
-        // send result back
-        mapping(string => DestnContract) storage map = destnContractMap[context.fromChain];
-        DestnContract storage destnContract = map["receiveComputeResult"];
-        require(destnContract.used, "action not registered");
-
-        bytes memory data = abi.encode(ret);
-        SQOS memory sqos = SQOS(0);
-        crossChainContract.sendMessage(context.fromChain, destnContract.contractAddress, destnContract.funcName, sqos, data, Session(0, 0));
-    }
-
-    /**
-     * Receives outsourcing computing result
-     * @param _result - accumulating result
-     */
-    function receiveComputeResult(uint _result) external {
-        require(
-            msg.sender == address(crossChainContract),
-            "Locker: caller is not CrossChain"
-        );
-        ocResult = _result;
+        crossChainContract.sendMessage(message);
     }
 
     ///////////////////////////////////////////////
@@ -191,9 +117,9 @@ contract Greetings is ContractBase {
     function registerPermittedContract(
         string calldata _chainName,
         string calldata _sender,
-        string calldata _funcName
+        bytes4 _funcName
     ) external onlyOwner {
-        mapping(string => string) storage map = permittedContractMap[
+        mapping(bytes4 => string) storage map = permittedContractMap[
             _chainName
         ];
         map[_funcName] = _sender;
@@ -208,17 +134,17 @@ contract Greetings is ContractBase {
     //  Will be deprecated soon
     function verify(
         string calldata _chainName,
-        string calldata _funcName,
+        bytes4 _funcName,
         string calldata _sender
     ) public view virtual returns (bool) {
-        mapping(string => string) storage map = permittedContractMap[
-            _chainName
-        ];
-        string storage sender = map[_funcName];
-        require(
-            keccak256(bytes(sender)) == keccak256(bytes(_sender)),
-            "Sender does not match"
-        );
+        // mapping(bytes4 => string) storage map = permittedContractMap[
+        //     _chainName
+        // ];
+        // string storage sender = map[_funcName];
+        // require(
+        //     keccak256(bytes(sender)) == keccak256(bytes(_sender)),
+        //     "Sender does not match"
+        // );
         return true;
     }
 }

@@ -3,10 +3,9 @@ pragma solidity >=0.8.0 <0.9.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./CrossChain/ContractAdvanced.sol";
-import "./IOCComputing.sol";
 
 // `OCComputing` is an example of multi-chain services with necessary implementations in `ContractAdvanced`, which provides basic cross-chain call interfaces.
-contract OCComputing is ContractAdvanced, IOCComputing {
+contract OCComputing is ContractAdvanced {
     // Destination contract info
     struct DestnContract {
         string contractAddress; // destination contract address
@@ -28,7 +27,7 @@ contract OCComputing is ContractAdvanced, IOCComputing {
     // Outsourcing computing data cache
     mapping(uint256 => uint256[]) cachedData;
     // Outsourcing computing result
-    mapping(uint256 => OCResult) public ocResult;
+    mapping(string => mapping(uint256 => OCResult)) public ocResult;
     
     /**
      * Send outsourcing computing task to other chain
@@ -40,27 +39,38 @@ contract OCComputing is ContractAdvanced, IOCComputing {
         DestnContract storage destnContract = map["receiveComputeTask"];
         require(destnContract.used, "action not registered");
 
-        bytes memory data = abi.encode(_nums);
-        SQOS memory sqos = SQOS(0);
+        // Construct payload
+        Payload memory data;
+        data.items = new PayloadItem[](1);
+        PayloadItem memory item = data.items[0];
+        item.name = "nums";
+        item.msgType = MsgType.EvmU32Array;
+        item.value = abi.encode(_nums);
+
+        SQoS[] memory sqos;
         uint id = crossChainCall(
             _toChain,
             destnContract.contractAddress,
             destnContract.funcName,
             sqos,
-            data
+            data,
+            OCComputing.receiveComputeTaskCallback.selector
         );
         cachedData[id] = _nums;
     }
 
     /**
      * Receives outsourcing computing task from other chain
-     * @param _nums - nums to be accumulated
+     * @param _payload - payload which contains nums to be accumulated
      */
-    function receiveComputeTask(uint32[] calldata _nums) external {
+    function receiveComputeTask(Payload calldata _payload) external {
         require(
             msg.sender == address(crossChainContract),
             "Locker: caller is not CrossChain"
         );
+
+        // decode
+        (uint32[] memory _nums) = abi.decode(_payload.items[0].value, (uint32[]));
         
         // compute
         uint ret = 0;
@@ -68,23 +78,29 @@ contract OCComputing is ContractAdvanced, IOCComputing {
             ret += _nums[i];
         }
 
-        // send result back
-        SimplifiedMessage memory context = getContext();
-        mapping(string => DestnContract) storage map = destnContractMap[context.fromChain];
-        DestnContract storage destnContract = map["receiveComputeTaskCallback"];
-        require(destnContract.used, "action not registered");
-
-        bytes memory data = abi.encode(ret);
-        SQOS memory sqos = SQOS(0);
-        crossChainRespond(destnContract.funcName, sqos, data);
+        // Construct payload
+        Payload memory data;
+        data.items = new PayloadItem[](1);
+        PayloadItem memory item = data.items[0];
+        item.name = "result";
+        item.msgType = MsgType.EvmU32;
+        item.value = abi.encode(ret);
+        SQoS[] memory sqos;
+        crossChainRespond(sqos, data);
     }
 
     /**
      * See IOCComputing
      */
-    function receiveComputeTaskCallback(uint _result) external override {
+    function receiveComputeTaskCallback(Payload calldata _payload) external {
+        require(
+            msg.sender == address(crossChainContract),
+            "Locker: caller is not CrossChain"
+        );
+
+        (uint32 _result) = abi.decode(_payload.items[0].value, (uint32));
         SimplifiedMessage memory context = getContext();
-        OCResult storage result = ocResult[context.session.id];
+        OCResult storage result = ocResult[context.fromChain][context.session.id];
         result.used = true;
         result.result = _result;
     }
@@ -143,17 +159,17 @@ contract OCComputing is ContractAdvanced, IOCComputing {
     //  Will be deprecated soon
     function verify(
         string calldata _chainName,
-        string calldata _funcName,
+        bytes4 _funcName,
         string calldata _sender
     ) public view virtual returns (bool) {
-        mapping(string => string) storage map = permittedContractMap[
-            _chainName
-        ];
-        string storage sender = map[_funcName];
-        require(
-            keccak256(bytes(sender)) == keccak256(bytes(_sender)),
-            "Sender does not match"
-        );
+        // mapping(string => string) storage map = permittedContractMap[
+        //     _chainName
+        // ];
+        // string storage sender = map[_funcName];
+        // require(
+        //     keccak256(bytes(sender)) == keccak256(bytes(_sender)),
+        //     "Sender does not match"
+        // );
         return true;
     }
 }

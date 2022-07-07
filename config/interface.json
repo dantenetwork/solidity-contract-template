@@ -1,0 +1,14 @@
+{
+	"EVM": {
+        "receiveGreeting": "0x2d436822",
+        "receiveComputeTask": "0x47e50a42"
+	},
+	"NEAR": {
+        "receiveGreeting": "receive_greeting",
+        "receiveComputeTask": "receive_compute_task"
+	},
+	"INK": {
+        "receiveGreeting": "0x0c724dc2",
+        "receiveComputeTask": "0x00000001"
+	}
+}

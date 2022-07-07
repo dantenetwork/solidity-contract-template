@@ -1,14 +1,22 @@
 const Greetings = artifacts.require("Greetings");
 const fs = require("fs");
 
-module.exports = async function (deployer) {
+module.exports = async function (deployer, network) {
   await deployer.deploy(Greetings);
-  console.log('Greeting contract address: ' + Greetings.address);
 
-  // generating address.json
-  const contractAddressFile = './build/address.json';
-  const contractAddress = {
-    'greetingsContractAddress': Greetings.address
-  };
-  fs.writeFileSync(contractAddressFile, JSON.stringify(contractAddress));
+  // Update config
+  if (network.indexOf('-fork') != -1) {
+    return;
+  }
+  
+  const contractAddressFile = './config/default.json';
+  let data = fs.readFileSync(contractAddressFile, 'utf8');
+  let jsonData = JSON.parse(data);
+  if (!jsonData[network]) {
+    console.warn('There is no config for: ', network, ', please add.');
+    jsonData[network] = {};
+  }
+
+  jsonData[network].greetingContractAddress = Greetings.address;
+  fs.writeFileSync(contractAddressFile, JSON.stringify(jsonData, null, '\t'));
 };
