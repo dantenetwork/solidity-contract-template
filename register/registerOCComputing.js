@@ -65,6 +65,10 @@ async function getOCResult(chainName, id) {
   return await ethereum.contractCall(contract, 'ocResult', [chainName, id]);
 }
 
+async function transfer(address) {
+  await ethereum.sendTransaction(web3, netConfig.chainId, contract, 'transferOwnership', testAccountPrivateKey, [address]);
+}
+
 (async function () {
   function list(val) {
     return val.split(',')
@@ -76,6 +80,7 @@ async function getOCResult(chainName, id) {
       .option('-r, --register <chain name>,<dest chain name>', 'Register destination chain contract', list)
       .option('-s, --send <chain name>,<dest chain name>,<num list>', 'Send greeting message', list)
       .option('-g, --get <chain name>,<dest chain name>,<id>', 'Get computing result', list)
+      .option('-t, --transfer <chain name>,<address>', 'Transfer ownership', list)
       .parse(process.argv);
 
   if (program.opts().initialize) {
@@ -119,5 +124,16 @@ async function getOCResult(chainName, id) {
     }
     let result = await getOCResult(program.opts().get[1], program.opts().get[2]);
     console.log('result', result);
+  }
+  else if (program.opts().transfer) {
+      if (program.opts().transfer.length != 2) {
+          console.log('2 arguments are needed, but ' + program.opts().transfer.length + ' provided');
+          return;
+      }
+      
+      if (!init(program.opts().transfer[0])) {
+          return;
+      }
+      await transfer(program.opts().transfer[1]);
   }
 }());
