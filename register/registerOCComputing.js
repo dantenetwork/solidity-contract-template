@@ -61,8 +61,8 @@ async function sendComputingTask(toChain, nums) {
     [toChain, nums]);
 }
 
-async function getOCResult(id) {
-  return await ethereum.contractCall(contract, 'ocResult', [id]);
+async function getOCResult(chainName, id) {
+  return await ethereum.contractCall(contract, 'ocResult', [chainName, id]);
 }
 
 (async function () {
@@ -75,7 +75,7 @@ async function getOCResult(id) {
       .option('-i, --initialize <chain name>', 'Initialize greeting contract')
       .option('-r, --register <chain name>,<dest chain name>', 'Register destination chain contract', list)
       .option('-s, --send <chain name>,<dest chain name>,<num list>', 'Send greeting message', list)
-      .option('-g, --get <chain name>,<id>', 'Get computing result', list)
+      .option('-g, --get <chain name>,<dest chain name>,<id>', 'Get computing result', list)
       .parse(process.argv);
 
   if (program.opts().initialize) {
@@ -109,15 +109,15 @@ async function getOCResult(id) {
     await sendComputingTask(program.opts().send[1], nums);
   }
   else if (program.opts().get) {
-    if (program.opts().get.length != 2) {
-        console.log('2 arguments are needed, but ' + program.opts().get.length + ' provided');
+    if (program.opts().get.length != 3) {
+        console.log('3 arguments are needed, but ' + program.opts().get.length + ' provided');
         return;
     }
 
     if (!init(program.opts().get[0])) {
         return;
     }
-    let result = await getOCResult(program.opts().get[1]);
+    let result = await getOCResult(program.opts().get[1], program.opts().get[2]);
     console.log('result', result);
   }
 }());
