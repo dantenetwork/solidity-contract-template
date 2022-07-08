@@ -1,20 +1,86 @@
 # solidity-contract-template
-
-## Currently
-**This is under construction!**
-
-This repo contains a basic `greeting` smart contract integrated with DANTE cross-chain service.
-
-The basic version developed in `solidity` is currently available.
-
-## Coming soon
-- More functions in `solidity` version;
-- The high level SDK for `cross-chain contract call` is under developing, that will bring more convenient for developers.
-- The `Near Rust-wasm` version.
+This repo will show you how to develop a contract in solidity with the feature of cross-chain communication.
 
 ## Usage
+### Initialize Project
+Click `Use this template` to start your multi-ecosystem dApp, and then install
+```
+npm install
+```
 
-Dependencies:
+Or you can use our SDK in a new solidity project
+```
+npm install @hthuang/contracts
+```
+
+### Use SDK
+Add the following code into your `.sol` file
+```
+import "@hthuang/contracts/interfaces/ICrossChain.sol";
+```
+
+Then you can use the interface of underlying cross-chain contract and message structures.
+
+## Specification
+The SDK provides users with two base contracts, which have some basic methods to finish cross-chain communication.
+
+### ContractBase
+Located at `CrossChain/ContractBase.sol`.
+
+**setCrossChainContract**
+This method can set custom cross-chain contract address.
+```
+function setCrossChainContract(address _address) public onlyOwner {
+    crossChainContract = ICrossChain(_address);
+}
+```
+
+**getContext**
+This method can return the context which containing neccessay information of current cross-chain message.
+```
+function getContext() public view returns (SimplifiedMessage memory) {
+    return crossChainContract.getCurrentMessage();
+}
+```
+
+### ContractAdvanced
+Located at `CrossChain/ContractAdvanced.sol`.
+
+**crossChainCall**
+This method can send a cross-chain call to a contract on another chain with a callback handler.
+```
+function crossChainCall(string memory _destnChainName, string memory _destnContractName,
+    string memory _funcName, SQoS[] memory _sqos, Payload memory _data, bytes4 _callback) internal returns (uint256) {
+    ISentMessage memory message;
+    message.toChain = _destnChainName;
+    message.sqos = _sqos;
+    message.session = Session(0, bytes.concat(_callback));
+    message.content = Content(_destnContractName, _funcName, _data);
+    return crossChainContract.sendMessage(message);
+}
+```
+
+**crossChainRespond**
+This method can call a callback to then contract of the source chain.
+```
+function crossChainRespond(SQoS[] memory _sqos, Payload memory _data) internal returns (uint256) {
+    SimplifiedMessage memory context = getContext();
+    ISentMessage memory message;
+    message.toChain = context.fromChain;
+    message.sqos = _sqos;
+    message.session = Session(context.id, "");
+    message.content = Content(context.sender, string(context.session.callback), _data);
+    return crossChainContract.sendMessage(message);
+}
+```
+
+## Examples
+There are two examples:
+- Greetings.sol: Implements `ContractBase`, shows sending a greeting message from evm-compatible chain to other chains.
+- OCComputing.sol: Implements `ContractAdvanced`, shows sending a outsourcing computing task to other chains, and receive results.
+
+### Dependencies
+* SDK
 * @dante-contracts
 * [@openzeppelin-contracts v4.4.2](https://github.com/OpenZeppelin/openzeppelin-contracts)
 * [@truffle/hdwallet-provider v2.0.0](https://www.npmjs.com/package/@truffle/hdwallet-provider)
