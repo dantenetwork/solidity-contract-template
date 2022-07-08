@@ -41,22 +41,31 @@ module.exports = {
     // tab if you use this network and you must also set the `host`, `port` and `network_id`
     // options below to some value.
     //
-    avalancheFuji: {
+    // Avalanche testnet
+    FUJI: {
       provider: () => new HDWalletProvider(mnemonic, `https://api.avax-test.network/ext/bc/C/rpc`),
       network_id: "*",       // Any network (default: none)
     },
-    platonDev: {
-      provider: () => new HDWalletProvider(mnemonic, `http://35.247.155.162:6789`),
+    // PlatON development network bases on evm
+    PLATONEVMDEV: {
+      provider: () => new HDWalletProvider(mnemonic, `wss://devnetopenapi2.platon.network/ws`),
       network_id: "*",       // Any network (default: none)
     },
-    bscTest: {
+    // BSC testnet
+    BSCTEST: {
       provider: () => new HDWalletProvider(mnemonic, `https://data-seed-prebsc-1-s1.binance.org:8545`),
       network_id: "*",       // Any network (default: none)
     },
-    rinkeby: {
-      provider: () => new HDWalletProvider(mnemonic, `https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161`),
+    // Ethereum testnet
+    RINKEBY: {
+      provider: () => new HDWalletProvider(mnemonic, `wss://rinkeby.infura.io/ws/v3/94ebec44ffc34501898dd5dccf387f81`),
       network_id: "*",       // Any network (default: none)
-    }
+    },
+    // Moonbeam testnet
+    MOONBASEALPHA: {
+      provider: () => new HDWalletProvider(mnemonic, `wss://moonbeam-alpha.api.onfinality.io/public-ws`),
+      network_id: "*",       // Any network (default: none)
+    },
   },
   // Configure your compilers
   compilers: {

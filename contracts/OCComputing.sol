@@ -2,11 +2,10 @@
 pragma solidity >=0.8.0 <0.9.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./CrossChain/ContractBase.sol";
+import "./CrossChain/ContractAdvanced.sol";
 
-// `Greetings` is an example of multi-chain services with necessary implementations in `ContractBase`, without which the user defined contract cannot work.
-// And besides, `registerDestnContract` and `registerPermittedContract` are templete implementations make the management of some user defined informations easier.
-contract Greetings is ContractBase {
+// `OCComputing` is an example of multi-chain services with necessary implementations in `ContractAdvanced`, which provides basic cross-chain call interfaces.
+contract OCComputing is ContractAdvanced {
     // Destination contract info
     struct DestnContract {
         string contractAddress; // destination contract address
@@ -14,70 +13,96 @@ contract Greetings is ContractBase {
         bool used;
     }
 
-    // greeting
-    struct Greeting {
-        string fromChain;
-        string title;
-        string content;
-        string date;
+    struct OCResult {
+        bool used;
+        uint256 result;
     }
 
     // Cross-chain destination contract map
     mapping(string => mapping(string => DestnContract)) public destnContractMap;
 
     // Cross-chain permitted contract map
-    mapping(string => mapping(bytes4 => string)) public permittedContractMap;
+    mapping(string => mapping(string => string)) public permittedContractMap;
 
-    // Store greetings
-    mapping(string => mapping(uint256 => Greeting)) public greetings;
-
+    // Outsourcing computing data cache
+    mapping(uint256 => uint256[]) cachedData;
+    // Outsourcing computing result
+    mapping(string => mapping(uint256 => OCResult)) public ocResult;
+    
     /**
-     * Receive greeting info from other chains
-     * @param _payload - payload which contains greeting message
-     */
-    function receiveGreeting(Payload calldata _payload) public {
-        require(
-            msg.sender == address(crossChainContract),
-            "Locker: caller is not CrossChain"
-        );
-
-        // `context` used for verify the operation authority
-        SimplifiedMessage memory context = getContext();
-        // verify sqos
-        // require(context.sqos.reveal == 1, "SQoS invalid!");
-
-        (string[] memory _value) = abi.decode(_payload.items[0].value, (string[]));
-        Greeting memory _greeting = Greeting(_value[0], _value[1], _value[2], _value[3]);
-        greetings[context.fromChain][context.id] = _greeting;
-    }
-
-    /**
-     * Send greeting info to other chains
+     * Send outsourcing computing task to other chain
      * @param _toChain - to chain name
-     * @param _greeting - greeting sent to other chain
+     * @param _nums - nums to be accumulated
      */
-    function sendGreeting(
-        string calldata _toChain,
-        string[] calldata _greeting
-    ) external {
+    function sendComputeTask(string calldata _toChain, uint32[] calldata _nums) external {
         mapping(string => DestnContract) storage map = destnContractMap[_toChain];
-        DestnContract storage destnContract = map["receiveGreeting"];
+        DestnContract storage destnContract = map["receiveComputeTask"];
         require(destnContract.used, "action not registered");
 
         // Construct payload
         Payload memory data;
         data.items = new PayloadItem[](1);
         PayloadItem memory item = data.items[0];
-        item.name = "greeting";
-        item.msgType = MsgType.EvmStringArray;
-        item.value = abi.encode(_greeting);
+        item.name = "nums";
+        item.msgType = MsgType.EvmU32Array;
+        item.value = abi.encode(_nums);
 
-        ISentMessage memory message;
-        message.toChain = _toChain;
-        message.session = Session(0, "");
-        message.content = Content(destnContract.contractAddress, destnContract.funcName, data);
+        SQoS[] memory sqos;
+        uint id = crossChainCall(
+            _toChain,
+            destnContract.contractAddress,
+            destnContract.funcName,
+            sqos,
+            data,
+            OCComputing.receiveComputeTaskCallback.selector
+        );
+        cachedData[id] = _nums;
+    }
 
-        crossChainContract.sendMessage(message);
+    /**
+     * Receives outsourcing computing task from other chain
+     * @param _payload - payload which contains nums to be accumulated
+     */
+    function receiveComputeTask(Payload calldata _payload) external {
+        require(
+            msg.sender == address(crossChainContract),
+            "Locker: caller is not CrossChain"
+        );
+
+        // decode
+        (uint32[] memory _nums) = abi.decode(_payload.items[0].value, (uint32[]));
+        
+        // compute
+        uint ret = 0;
+        for (uint i = 0; i < _nums.length; i++) {
+            ret += _nums[i];
+        }
+
+        // Construct payload
+        Payload memory data;
+        data.items = new PayloadItem[](1);
+        PayloadItem memory item = data.items[0];
+        item.name = "result";
+        item.msgType = MsgType.EvmU32;
+        item.value = abi.encode(ret);
+        SQoS[] memory sqos;
+        crossChainRespond(sqos, data);
+    }
+
+    /**
+     * See IOCComputing
+     */
+    function receiveComputeTaskCallback(Payload calldata _payload) external {
+        require(
+            msg.sender == address(crossChainContract),
+            "Locker: caller is not CrossChain"
+        );
+
+        (uint32 _result) = abi.decode(_payload.items[0].value, (uint32));
+        SimplifiedMessage memory context = getContext();
+        OCResult storage result = ocResult[context.fromChain][context.session.id];
+        result.used = true;
+        result.result = _result;
     }
 
     ///////////////////////////////////////////////
@@ -117,9 +142,9 @@ contract Greetings is ContractBase {
     function registerPermittedContract(
         string calldata _chainName,
         string calldata _sender,
-        bytes4 _funcName
+        string calldata _funcName
     ) external onlyOwner {
-        mapping(bytes4 => string) storage map = permittedContractMap[
+        mapping(string => string) storage map = permittedContractMap[
             _chainName
         ];
         map[_funcName] = _sender;
@@ -137,7 +162,7 @@ contract Greetings is ContractBase {
         bytes4 _funcName,
         string calldata _sender
     ) public view virtual returns (bool) {
-        // mapping(bytes4 => string) storage map = permittedContractMap[
+        // mapping(string => string) storage map = permittedContractMap[
         //     _chainName
         // ];
         // string storage sender = map[_funcName];
