@@ -4,6 +4,8 @@ pragma solidity >=0.8.0 <0.9.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./CrossChain/ContractAdvanced.sol";
 
+uint256 constant CALLER_NOT_CROSS_CHAIN_CONTRACT = 100;
+
 // `OCComputing` is an example of multi-chain services with necessary implementations in `ContractAdvanced`, which provides basic cross-chain call interfaces.
 contract OCComputing is ContractAdvanced {
     // Destination contract info
@@ -63,11 +65,10 @@ contract OCComputing is ContractAdvanced {
      * Receives outsourcing computing task from other chain
      * @param _payload - payload which contains nums to be accumulated
      */
-    function receiveComputeTask(Payload calldata _payload) external {
-        require(
-            msg.sender == address(crossChainContract),
-            "Locker: caller is not CrossChain"
-        );
+    function receiveComputeTask(Payload calldata _payload) external returns (uint256) {
+        if (msg.sender != address(crossChainContract)) {
+            return CALLER_NOT_CROSS_CHAIN_CONTRACT;
+        }
 
         // decode
         (uint32[] memory _nums) = abi.decode(_payload.items[0].value, (uint32[]));
@@ -87,22 +88,25 @@ contract OCComputing is ContractAdvanced {
         item.value = abi.encode(ret);
         SQoS[] memory sqos;
         crossChainRespond(sqos, data);
+
+        return 0;
     }
 
     /**
      * See IOCComputing
      */
-    function receiveComputeTaskCallback(Payload calldata _payload) external {
-        require(
-            msg.sender == address(crossChainContract),
-            "Locker: caller is not CrossChain"
-        );
+    function receiveComputeTaskCallback(Payload calldata _payload) external returns (uint256) {
+        if (msg.sender != address(crossChainContract)) {
+            return CALLER_NOT_CROSS_CHAIN_CONTRACT;
+        }
 
         (uint32 _result) = abi.decode(_payload.items[0].value, (uint32));
         SimplifiedMessage memory context = getContext();
         OCResult storage result = ocResult[context.fromChain][context.session.id];
         result.used = true;
         result.result = _result;
+
+        return 0;
     }
 
     ///////////////////////////////////////////////
