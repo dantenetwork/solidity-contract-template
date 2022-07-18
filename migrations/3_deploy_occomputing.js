@@ -4,7 +4,7 @@ const fs = require("fs");
 module.exports = async function (deployer, network) {
   await deployer.deploy(OCComputing);
   
-  if (network.indexOf('-fork') != -1) {
+  if (network.indexOf('-fork') != -1 || network == 'test') {
     return;
   }
   

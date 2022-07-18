@@ -4,6 +4,8 @@ pragma solidity >=0.8.0 <0.9.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./CrossChain/ContractBase.sol";
 
+uint256 constant CALLER_NOT_CROSS_CHAIN_CONTRACT = 100;
+
 // `Greetings` is an example of multi-chain services with necessary implementations in `ContractBase`, without which the user defined contract cannot work.
 // And besides, `registerDestnContract` and `registerPermittedContract` are templete implementations make the management of some user defined informations easier.
 contract Greetings is ContractBase {
@@ -35,11 +37,10 @@ contract Greetings is ContractBase {
      * Receive greeting info from other chains
      * @param _payload - payload which contains greeting message
      */
-    function receiveGreeting(Payload calldata _payload) public {
-        require(
-            msg.sender == address(crossChainContract),
-            "Locker: caller is not CrossChain"
-        );
+    function receiveGreeting(Payload calldata _payload) public returns (uint256) {
+        if (msg.sender != address(crossChainContract)) {
+            return CALLER_NOT_CROSS_CHAIN_CONTRACT;
+        }
 
         // `context` used for verify the operation authority
         SimplifiedMessage memory context = getContext();
@@ -49,6 +50,8 @@ contract Greetings is ContractBase {
         (string[] memory _value) = abi.decode(_payload.items[0].value, (string[]));
         Greeting memory _greeting = Greeting(_value[0], _value[1], _value[2], _value[3]);
         greetings[context.fromChain][context.id] = _greeting;
+
+        return 0;
     }
 
     /**
