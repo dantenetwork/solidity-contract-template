@@ -31,6 +31,8 @@ contract Greetings is ContractBase {
     // Store greetings
     mapping(string => mapping(uint256 => Greeting)) public greetings;
 
+    uint256 public currentId;
+
     /**
      * Receive greeting info from other chains
      * @param _payload - payload which contains greeting message
@@ -77,7 +79,7 @@ contract Greetings is ContractBase {
         message.session = Session(0, "");
         message.content = Content(destnContract.contractAddress, destnContract.funcName, data);
 
-        crossChainContract.sendMessage(message);
+        currentId = crossChainContract.sendMessage(message);
     }
 
     ///////////////////////////////////////////////

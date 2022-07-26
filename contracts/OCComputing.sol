@@ -28,6 +28,8 @@ contract OCComputing is ContractAdvanced {
     mapping(uint256 => uint256[]) cachedData;
     // Outsourcing computing result
     mapping(string => mapping(uint256 => OCResult)) public ocResult;
+
+    uint256 public currentId;
     
     /**
      * Send outsourcing computing task to other chain
@@ -57,6 +59,7 @@ contract OCComputing is ContractAdvanced {
             OCComputing.receiveComputeTaskCallback.selector
         );
         cachedData[id] = _nums;
+        currentId = id;
     }
 
     /**
