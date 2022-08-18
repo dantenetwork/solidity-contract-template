@@ -10,8 +10,8 @@ uint256 constant CALLER_NOT_CROSS_CHAIN_CONTRACT = 100;
 contract OCComputing is ContractAdvanced {
     // Destination contract info
     struct DestnContract {
-        string contractAddress; // destination contract address
-        string funcName; // destination contract action name
+        bytes contractAddress; // destination contract address
+        bytes funcName; // destination contract action name
         bool used;
     }
 
@@ -123,8 +123,8 @@ contract OCComputing is ContractAdvanced {
     function registerDestnContract(
         string calldata _funcName,
         string calldata _toChain,
-        string calldata _contractAddress,
-        string calldata _contractFuncName
+        bytes calldata _contractAddress,
+        bytes calldata _contractFuncName
     ) external onlyOwner {
         mapping(string => DestnContract) storage map = destnContractMap[_toChain];
         DestnContract storage destnContract = map[_funcName];
@@ -164,7 +164,7 @@ contract OCComputing is ContractAdvanced {
     function verify(
         string calldata _chainName,
         bytes4 _funcName,
-        string calldata _sender
+        bytes calldata _sender
     ) public view virtual returns (bool) {
         // mapping(string => string) storage map = permittedContractMap[
         //     _chainName
