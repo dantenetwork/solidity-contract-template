@@ -24,7 +24,7 @@ contract ContractAdvanced is ContractBase {
         ISentMessage memory message;
         message.toChain = _destnChainName;
         message.sqos = _sqos;
-        message.session = Session(0, bytes.concat(_callback));
+        message.session = Session(0, 0, bytes.concat(_callback), "", "");
         message.content = Content(_destnContractName, _funcName, _data);
         return crossChainContract.sendMessage(message);
     }
@@ -43,7 +43,7 @@ contract ContractAdvanced is ContractBase {
         ISentMessage memory message;
         message.toChain = context.fromChain;
         message.sqos = _sqos;
-        message.session = Session(context.id, "");
+        message.session = Session(context.id, 0, "", "", "");
         message.content = Content(context.sender, context.session.callback, _data);
         return crossChainContract.sendMessage(message);
     }
