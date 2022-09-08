@@ -2,7 +2,6 @@
 pragma solidity >=0.8.0 <0.9.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@hthuang/contracts/interfaces/ICrossChain.sol";
-import "./ChainAddress.sol";
 
 contract ContractBase is Ownable {
     // Dante cross chain contract
