@@ -18,11 +18,11 @@
   "homepage": "https://github.com/dantenetwork/solidity-contract-template#readme",
   "dependencies": {
     "@hthuang/contracts": "0.1.1",
-    "@openzeppelin/contracts": "^4.5.0",
-    "@truffle/hdwallet-provider": "^2.0.3",
-    "commander": "^9.3.0",
+    "@openzeppelin/contracts": "^4.7.3",
+    "@truffle/hdwallet-provider": "^2.0.14",
+    "commander": "^9.4.0",
     "config": "^3.3.7",
     "fs": "^0.0.1-security",
-    "web3": "^1.7.1"
+    "web3": "^1.7.5"
   }
 }

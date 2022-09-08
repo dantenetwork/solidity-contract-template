@@ -92,6 +92,71 @@ contract OCComputing is ContractAdvanced {
         return 0;
     }
 
+    // /**
+    //  * Send outsourcing computing task to other chain
+    //  * @param _toChain - to chain name
+    //  * @param _nums - nums to be accumulated
+    //  */
+    // function sendComputeTask(string calldata _toChain, uint8[] calldata _nums) external {
+    //     mapping(string => DestnContract) storage map = destnContractMap[_toChain];
+    //     DestnContract storage destnContract = map["receiveComputeTask"];
+    //     require(destnContract.used, "action not registered");
+
+    //     // Construct payload
+    //     Payload memory data;
+    //     data.items = new PayloadItem[](1);
+    //     PayloadItem memory item = data.items[0];
+    //     item.name = "nums";
+    //     item.msgType = MsgType.Bytes;
+    //     bytes memory b;
+    //     for (uint256 i = 0; i < _nums.length; i++) {
+    //         b = bytes.concat(b, abi.encodePacked(_nums[i]));
+    //     }
+    //     item.value = abi.encode(b);
+
+    //     SQoS[] memory sqos;
+    //     uint id = crossChainCall(
+    //         _toChain,
+    //         destnContract.contractAddress,
+    //         destnContract.funcName,
+    //         sqos,
+    //         data,
+    //         OCComputing.receiveComputeTaskCallback.selector
+    //     );
+    //     cachedData[id] = _nums;
+    // }
+
+    // /**
+    //  * Receives outsourcing computing task from other chain
+    //  * @param _payload - payload which contains nums to be accumulated
+    //  */
+    // function receiveComputeTask(Payload calldata _payload) external returns (uint256) {
+    //     if (msg.sender != address(crossChainContract)) {
+    //         return CALLER_NOT_CROSS_CHAIN_CONTRACT;
+    //     }
+
+    //     // decode
+    //     (bytes memory _nums) = abi.decode(_payload.items[0].value, (bytes));
+        
+    //     // compute
+    //     uint ret = 0;
+    //     for (uint i = 0; i < _nums.length; i++) {
+    //         ret += uint8(_nums[i]);
+    //     }
+
+    //     // Construct payload
+    //     Payload memory data;
+    //     data.items = new PayloadItem[](1);
+    //     PayloadItem memory item = data.items[0];
+    //     item.name = "result";
+    //     item.msgType = MsgType.EvmU32;
+    //     item.value = abi.encode(ret);
+    //     SQoS[] memory sqos;
+    //     crossChainRespond(sqos, data);
+
+    //     return 0;
+    // }
+
     /**
      * See IOCComputing
      */
