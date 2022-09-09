@@ -4,10 +4,10 @@ const utils = require('./utils');
 const web3 = require('web3');
 const web3js = new web3(web3.givenProvider);
 
-const CrossChain = artifacts.require('@hthuang/contracts/TwoPhaseCommitCrossChain');
+const RoutersCore = artifacts.require('@hthuang/contracts/RoutersCore');
+const CrossChain = artifacts.require('@hthuang/contracts/CrossChain');
 const Bytes = artifacts.require('@hthuang/contracts/Bytes');
 const Verify = artifacts.require('@hthuang/contracts/Verify');
-const MessageVerify = artifacts.require('@hthuang/contracts/MessageVerify');
 const OCComputing = artifacts.require("OCComputing");
 
 const eq = assert.equal.bind(assert);
@@ -18,21 +18,22 @@ contract('OCComputing', function(accounts) {
 
     let crossChain;
     let ocComputing;
-    let messageVerify;
     
     let initContract = async function() {
+        routersCore = await RoutersCore.new();
         let bytes = await Bytes.new();
         await CrossChain.link(bytes);
         crossChain = await CrossChain.new('PLATONEVMDEV');
-        messageVerify = await MessageVerify.new();
         ocComputing = await OCComputing.deployed();
-        await crossChain.setVerifyContract(messageVerify.address);
+        await crossChain.setRouterCoreContractAddress(routersCore.address);
 
         // register cross-chain contract address
         await ocComputing.setCrossChainContract(crossChain.address);
 
-        // register porters
-        await crossChain.changePortersAndRequirement([user1], 1);
+        // register routers
+        await routersCore.registerRouter(user1);
+        await routersCore.setSelectedNumber(1);
+        await routersCore.selectRouters();
 
         // register target
         await ocComputing.registerDestnContract('receiveComputeTask', 'PLATONEVMDEV', OCComputing.address, '0x12345678');

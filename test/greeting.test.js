@@ -4,10 +4,10 @@ const utils = require('./utils');
 const web3 = require('web3');
 const web3js = new web3(web3.givenProvider);
 
-const CrossChain = artifacts.require('@hthuang/contracts/TwoPhaseCommitCrossChain');
+const RoutersCore = artifacts.require('@hthuang/contracts/RoutersCore');
+const CrossChain = artifacts.require('@hthuang/contracts/CrossChain');
 const Bytes = artifacts.require('@hthuang/contracts/Bytes');
 const Verify = artifacts.require('@hthuang/contracts/Verify');
-const MessageVerify = artifacts.require('@hthuang/contracts/MessageVerify');
 const Greetings = artifacts.require("Greetings");
 
 const eq = assert.equal.bind(assert);
@@ -17,22 +17,24 @@ contract('Greetings', function(accounts) {
     let user1 = accounts[1];
 
     let crossChain;
+    let routersCore;
     let greeting;
-    let messageVerify;
     
     let initContract = async function() {
+        routersCore = await RoutersCore.new();
         let bytes = await Bytes.new();
         await CrossChain.link(bytes);
         crossChain = await CrossChain.new('PLATONEVMDEV');
-        messageVerify = await MessageVerify.new();
         greeting = await Greetings.deployed();
-        await crossChain.setVerifyContract(messageVerify.address);
+        await crossChain.setRouterCoreContractAddress(routersCore.address);
 
         // register cross-chain contract address
         await greeting.setCrossChainContract(crossChain.address);
 
-        // register porters
-        await crossChain.changePortersAndRequirement([user1], 1);
+        // register routers
+        await routersCore.registerRouter(user1);
+        await routersCore.setSelectedNumber(1);
+        await routersCore.selectRouters();
 
         // register target
         await greeting.registerDestnContract('receiveGreeting', 'PLATONEVMDEV', Greetings.address, '0x2d436822');
