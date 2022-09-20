@@ -17,8 +17,9 @@ contract OCComputing is ContractAdvanced {
 
     struct OCResult {
         bool used;
-        uint256 result;
-        uint256[] cachedData;
+        uint32 result;
+        uint32 expected;
+        uint256 session;
     }
 
     // Cross-chain destination contract map
@@ -29,6 +30,12 @@ contract OCComputing is ContractAdvanced {
 
     // Outsourcing computing result
     mapping(string => mapping(uint256 => OCResult)) public ocResult;
+
+    uint256[] taskList;
+
+    function getTaskList() external returns (uint256[] memory) {
+        return taskList;
+    }
     
     /**
      * Send outsourcing computing task to other chain
@@ -58,7 +65,12 @@ contract OCComputing is ContractAdvanced {
             OCComputing.receiveComputeTaskCallback.selector
         );
         OCResult storage result = ocResult[_toChain][id];
-        result.cachedData = _nums;
+
+        uint32 sum = 0;
+        for (uint256 i = 0; i < _nums.length; i++) {
+            sum += _nums[i];
+        }
+        result.expected = sum;
         result.used = false;
     }
 
