@@ -21,6 +21,12 @@ import "@hthuang/contracts/interfaces/ICrossChain.sol";
 
 Then you can use the interface of underlying cross-chain contract and message structures.
 
+### Cross-chain contract address
+```
+0x2999fe13d3CAa63C0bC523E8D5b19A265637dbd2
+```
+The cross-chain contract address is configured [here](./config/default.json)
+
 ## Specification
 The SDK provides users with two base contracts, which have some basic methods to finish cross-chain communication.
 
