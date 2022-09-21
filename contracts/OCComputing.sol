@@ -29,13 +29,7 @@ contract OCComputing is ContractAdvanced {
     mapping(string => mapping(string => string)) public permittedContractMap;
 
     // Outsourcing computing result
-    mapping(string => mapping(uint256 => OCResult)) public ocResult;
-
-    uint256[] taskList;
-
-    function getTaskList() external returns (uint256[] memory) {
-        return taskList;
-    }
+    mapping(string => OCResult[]) public ocResult;
     
     /**
      * Send outsourcing computing task to other chain
@@ -56,7 +50,7 @@ contract OCComputing is ContractAdvanced {
         item.value = abi.encode(_nums);
 
         SQoS[] memory sqos;
-        uint id = crossChainCall(
+        uint256 id = crossChainCall(
             _toChain,
             destnContract.contractAddress,
             destnContract.funcName,
@@ -64,14 +58,14 @@ contract OCComputing is ContractAdvanced {
             data,
             OCComputing.receiveComputeTaskCallback.selector
         );
-        OCResult storage result = ocResult[_toChain][id];
+        OCResult storage result = ocResult[_toChain].push();
 
         uint32 sum = 0;
         for (uint256 i = 0; i < _nums.length; i++) {
             sum += _nums[i];
         }
         result.expected = sum;
-        result.used = false;
+        result.session = id;
     }
 
     /**
@@ -105,70 +99,21 @@ contract OCComputing is ContractAdvanced {
         return 0;
     }
 
-    // /**
-    //  * Send outsourcing computing task to other chain
-    //  * @param _toChain - to chain name
-    //  * @param _nums - nums to be accumulated
-    //  */
-    // function sendComputeTask(string calldata _toChain, uint8[] calldata _nums) external {
-    //     mapping(string => DestnContract) storage map = destnContractMap[_toChain];
-    //     DestnContract storage destnContract = map["receiveComputeTask"];
-    //     require(destnContract.used, "action not registered");
+    /**
+     * Clear historical messages
+     * @param _chainName - The chain which messages come from
+     */
+    function clear(string calldata _chainName) external onlyOwner {
+        delete ocResult[_chainName];
+    }
 
-    //     // Construct payload
-    //     Payload memory data;
-    //     data.items = new PayloadItem[](1);
-    //     PayloadItem memory item = data.items[0];
-    //     item.name = "nums";
-    //     item.msgType = MsgType.Bytes;
-    //     bytes memory b;
-    //     for (uint256 i = 0; i < _nums.length; i++) {
-    //         b = bytes.concat(b, abi.encodePacked(_nums[i]));
-    //     }
-    //     item.value = abi.encode(b);
-
-    //     SQoS[] memory sqos;
-    //     uint id = crossChainCall(
-    //         _toChain,
-    //         destnContract.contractAddress,
-    //         destnContract.funcName,
-    //         sqos,
-    //         data,
-    //         OCComputing.receiveComputeTaskCallback.selector
-    //     );
-    //     cachedData[id] = _nums;
-    // }
-
-    // /**
-    //  * Receives outsourcing computing task from other chain
-    //  * @param _payload - payload which contains nums to be accumulated
-    //  */
-    // function receiveComputeTask(Payload calldata _payload) external returns (uint256) {
-    //     if (msg.sender != address(crossChainContract)) {
-    //         return CALLER_NOT_CROSS_CHAIN_CONTRACT;
-    //     }
-
-    //     // decode
-    //     (bytes memory _nums) = abi.decode(_payload.items[0].value, (bytes));
-        
-    //     // compute
-    //     uint ret = 0;
-    //     for (uint i = 0; i < _nums.length; i++) {
-    //         ret += uint8(_nums[i]);
-    //     }
-
-    //     // Construct payload
-    //     Payload memory data;
-    //     data.items = new PayloadItem[](1);
-    //     PayloadItem memory item = data.items[0];
-    //     item.name = "result";
-    //     item.msgType = MsgType.EvmU32;
-    //     item.value = abi.encode(ret);
-    //     SQoS[] memory sqos;
-    //     crossChainRespond(sqos, data);
-
-    //     return 0;
-    // }
+    /**
+     * Returns all tasks
+     * @param _chainName - The chain which messages come from
+     */
+    function getResults(string calldata _chainName) external view returns (OCResult[] memory) {
+        return ocResult[_chainName];
+    }
 
     /**
      * See IOCComputing
@@ -180,7 +125,17 @@ contract OCComputing is ContractAdvanced {
 
         (uint32 _result) = abi.decode(_payload.items[0].value, (uint32));
         SimplifiedMessage memory context = getContext();
-        OCResult storage result = ocResult[context.fromChain][context.session.id];
+        uint256 index = 0;
+        bool found = false;
+        for (uint256 i = 0; i < ocResult[context.fromChain].length; i++) {
+            if (ocResult[context.fromChain][i].session == context.session.id) {
+                found = true;
+                index = i;
+                break;
+            }
+        }
+        require(found, "Not found");
+        OCResult storage result = ocResult[context.fromChain][index];
         result.used = true;
         result.result = _result;
 

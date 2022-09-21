@@ -65,8 +65,16 @@ contract('Greetings', function(accounts) {
             await crossChain.executeMessage('PLATONEVMDEV', 1);
             let context = await crossChain.getCurrentMessage();
             assert(new BN(context.id.toString()).eq(new BN('1')));
-            let g = await greeting.greetings('PLATONEVMDEV', context.id);
+            let g = await greeting.greetings('PLATONEVMDEV', 0);
             assert(g.fromChain != '');
+            console.log(await greeting.getGreetings('PLATONEVMDEV'));
+        });
+    });
+    
+    describe('Clear', function() {
+        it('should execute successfully', async () => {
+            await greeting.clear('PLATONEVMDEV');
+            await utils.expectThrow(greeting.greetings('PLATONEVMDEV', 0), 'revert');
         });
     });
 });

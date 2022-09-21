@@ -75,6 +75,10 @@ async function transfer(address) {
   await ethereum.sendTransaction(web3, netConfig.chainId, contract, 'transferOwnership', testAccountPrivateKey, [address]);
 }
 
+async function clear(chainName) {
+  await ethereum.sendTransaction(web3, netConfig.chainId, contract, 'clear', testAccountPrivateKey, [chainName]);
+}
+
 (async function () {
   function list(val) {
     return val.split(',')
@@ -87,6 +91,7 @@ async function transfer(address) {
       .option('-s, --send <chain name>,<dest chain name>', 'Send greeting message', list)
       .option('-g, --get <chain name>,<dest chain name>,<id>', 'Get greeting message', list)
       .option('-t, --transfer <chain name>,<address>', 'Transfer ownership', list)
+      .option('-c, --clear <chain name>,<dest chain name>', 'Clear messages from destination chain contract', list)
       .parse(process.argv);
 
   if (program.opts().initialize) {
@@ -139,5 +144,16 @@ async function transfer(address) {
           return;
       }
       await transfer(program.opts().transfer[1]);
+  }
+  else if (program.opts().clear) {
+      if (program.opts().clear.length != 2) {
+          console.log('2 arguments are needed, but ' + program.opts().clear.length + ' provided');
+          return;
+      }
+      
+      if (!init(program.opts().clear[0])) {
+          return;
+      }
+      await clear(program.opts().clear[1]);
   }
 }());

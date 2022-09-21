@@ -22,6 +22,7 @@ contract Greetings is ContractBase {
         string title;
         string content;
         string date;
+        uint256 session;
     }
 
     // Cross-chain destination contract map
@@ -31,7 +32,7 @@ contract Greetings is ContractBase {
     mapping(string => mapping(bytes4 => string)) public permittedContractMap;
 
     // Store greetings
-    mapping(string => mapping(uint256 => Greeting)) public greetings;
+    mapping(string => Greeting[]) public greetings;
 
     /**
      * Receive greeting info from other chains
@@ -48,8 +49,8 @@ contract Greetings is ContractBase {
         // require(context.sqos.reveal == 1, "SQoS invalid!");
 
         (string[] memory _value) = abi.decode(_payload.items[0].value, (string[]));
-        Greeting memory _greeting = Greeting(_value[0], _value[1], _value[2], _value[3]);
-        greetings[context.fromChain][context.id] = _greeting;
+        Greeting memory _greeting = Greeting(_value[0], _value[1], _value[2], _value[3], context.id);
+        greetings[context.fromChain].push(_greeting);
 
         return 0;
     }
@@ -81,6 +82,22 @@ contract Greetings is ContractBase {
         message.content = Content(destnContract.contractAddress, destnContract.funcName, data);
 
         crossChainContract.sendMessage(message);
+    }
+
+    /**
+     * Clear historical messages
+     * @param _chainName - The chain which messages come from
+     */
+    function clear(string calldata _chainName) external onlyOwner {
+        delete greetings[_chainName];
+    }
+
+    /**
+     * Returns all messages from a chain
+     * @param _chainName - The chain which messages come from
+     */
+    function getGreetings(string calldata _chainName) external view returns (Greeting[] memory) {
+        return greetings[_chainName];
     }
 
     ///////////////////////////////////////////////

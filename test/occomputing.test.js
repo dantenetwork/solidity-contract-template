@@ -83,8 +83,16 @@ contract('OCComputing', function(accounts) {
             await crossChain.executeMessage('PLATONEVMDEV', 2);
             let context = await crossChain.getCurrentMessage();
             assert(new BN(context.id.toString()).eq(new BN('2')));
-            let result = await ocComputing.ocResult('PLATONEVMDEV', 1);
+            let result = await ocComputing.ocResult('PLATONEVMDEV', 0);
             assert(result.result.eq(new BN('12')));
+            console.log(await ocComputing.getResults('PLATONEVMDEV'));
+        });
+    });
+    
+    describe('Clear', function() {
+        it('should execute successfully', async () => {
+            await ocComputing.clear('PLATONEVMDEV');
+            await utils.expectThrow(ocComputing.ocResult('PLATONEVMDEV', 0), 'revert');
         });
     });
 });
