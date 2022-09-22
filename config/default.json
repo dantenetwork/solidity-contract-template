@@ -9,7 +9,7 @@
 	},
 	"FLOWTEST": {
 		"computingContractAddress": "0xc133efc4b43676a0",
-		"greetingContractAddress": "0xc133efc4b43676a0",
+		"greetingContractAddress": "0x86fc6f40cd9f9c66",
 		"interface": "FLOW"
 	}
 }
