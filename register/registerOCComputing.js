@@ -61,8 +61,8 @@ async function sendComputingTask(toChain, nums) {
     [toChain, nums]);
 }
 
-async function getOCResult(chainName, id) {
-  return await ethereum.contractCall(contract, 'ocResult', [chainName, id]);
+async function getOCResult(chainName) {
+  return await ethereum.contractCall(contract, 'getResults', [chainName]);
 }
 
 async function transfer(address) {
@@ -119,15 +119,15 @@ async function clear(chainName) {
     await sendComputingTask(program.opts().send[1], nums);
   }
   else if (program.opts().get) {
-    if (program.opts().get.length != 3) {
-        console.log('3 arguments are needed, but ' + program.opts().get.length + ' provided');
+    if (program.opts().get.length != 2) {
+        console.log('2 arguments are needed, but ' + program.opts().get.length + ' provided');
         return;
     }
 
     if (!init(program.opts().get[0])) {
         return;
     }
-    let result = await getOCResult(program.opts().get[1], program.opts().get[2]);
+    let result = await getOCResult(program.opts().get[1]);
     console.log('result', result);
   }
   else if (program.opts().transfer) {
