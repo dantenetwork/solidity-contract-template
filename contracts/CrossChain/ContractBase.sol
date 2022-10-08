@@ -19,4 +19,19 @@ contract ContractBase is Ownable {
     function getContext() public view returns (SimplifiedMessage memory) {
         return crossChainContract.getCurrentMessage();
     }
+
+    /**
+     * This verify method will be invoked by the CrossChain contract automatically, ensure that only registered contract(registerSourceContract) calls are allowed
+     * @param _chainName - chain name of cross chain message
+     * @param _funcName - contract action name of cross chain message
+     * @param _sender - cross chain message sender
+     */
+    //  Will be deprecated soon
+    function verify(
+        string calldata _chainName,
+        bytes4 _funcName,
+        bytes calldata _sender
+    ) public view virtual returns (bool) {
+        return true;
+    }
 }
