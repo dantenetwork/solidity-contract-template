@@ -156,7 +156,7 @@ contract Greetings is ContractBase {
         string calldata _chainName,
         bytes4 _funcName,
         bytes calldata _sender
-    ) public view virtual returns (bool) {
+    ) public view override returns (bool) {
         // mapping(bytes4 => string) storage map = permittedContractMap[
         //     _chainName
         // ];
