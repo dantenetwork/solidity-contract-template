@@ -10891,7 +10891,7 @@
                   "expression": {
                     "arguments": [
                       {
-                        "name": "headStart",
+                        "name": "i",
                         "nodeType": "YulIdentifier",
                         "src": "13444:9:8"
                       },
@@ -10904,7 +10904,7 @@
                       }
                     ],
                     "functionName": {
-                      "name": "mstore",
+                      "name": "lt",
                       "nodeType": "YulIdentifier",
                       "src": "13437:6:8"
                     },
@@ -10925,12 +10925,32 @@
                         "src": "13493:6:8"
                       },
                       {
-                        "arguments": [
-                          {
-                            "name": "headStart",
+                        "nodeType": "YulAssignment",
+                        "src": "14125:14:8",
+                        "value": {
+                          "arguments": [
+                            {
+                              "name": "i",
+                              "nodeType": "YulIdentifier",
+                              "src": "14134:1:8"
+                            },
+                            {
+                              "kind": "number",
+                              "nodeType": "YulLiteral",
+                              "src": "14137:1:8",
+                              "type": "",
+                              "value": "1"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "add",
                             "nodeType": "YulIdentifier",
                             "src": "13505:9:8"
                           },
+                          "nodeType": "YulFunctionCall",
+                          "src": "14130:9:8"
+                        },
+                        "variableNames": [
                           {
                             "kind": "number",
                             "nodeType": "YulLiteral",
@@ -10966,7 +10986,7 @@
                 }
               ]
             },
-            "name": "abi_encode_tuple_t_string_memory_ptr__to_t_string_memory_ptr__fromStack_reversed",
+            "name": "abi_encode_tuple_t_array$_t_struct$_Greeting_$622_memory_ptr_$dyn_memory_ptr__to_t_array$_t_struct$_Greeting_$622_memory_ptr_$dyn_memory_ptr__fromStack_reversed",
             "nodeType": "YulFunctionDefinition",
             "parameters": [
               {
@@ -17636,7 +17656,7 @@
             ],
             "returnVariables": [
               {
-                "name": "value0",
+                "name": "end",
                 "nodeType": "YulTypedName",
                 "src": "20424:6:8",
                 "type": ""
@@ -27144,8 +27164,8 @@
                     },
                     "src": "2959:86:6",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_Content_$9_memory_ptr",
-                      "typeString": "struct Content memory"
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
                     }
                   },
                   "id": 825,

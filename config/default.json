@@ -1,12 +1,4 @@
 {
-	"FUJI": {
-		"nodeAddress": "https://api.avax-test.network/ext/bc/C/rpc",
-		"crossChainContractAddress": "0x8177cBe1c9a0B08B536C55097b569dfaEc5cb520",
-		"greetingContractAddress": "0x1723f39e05Ca8b14ACaf244bAFFBd79801d42A63",
-		"computingContractAddress": "0x7F5b6F5F7a786F63383E8681Da7ACCEed76Ab209",
-		"chainId": 43113,
-		"interface": "EVM"
-	},
 	"BSCTEST": {
 		"nodeAddress": "https://data-seed-prebsc-1-s1.binance.org:8545",
 		"crossChainContractAddress": "0x5950b420377Ac8128485D54307762FC952e14CD4",
@@ -58,5 +50,10 @@
 		"computingContractAddress": "0xA768Ed8CF4DeEE3Ff11e9fC8192F905D2FEa7313",
 		"greetingContractAddress": "0xb8732640D89BdeF45784B75321510313E0782AB2",
 		"interface": "INK"
+	},
+	"FLOWTEST": {
+		"computingContractAddress": "0xc133efc4b43676a0",
+		"greetingContractAddress": "0x86fc6f40cd9f9c66",
+		"interface": "FLOW"
 	}
 }

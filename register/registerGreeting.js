@@ -89,7 +89,7 @@ async function clear(chainName) {
       .option('-i, --initialize <chain name>', 'Initialize greeting contract')
       .option('-r, --register <chain name>,<dest chain name>', 'Register destination chain contract', list)
       .option('-s, --send <chain name>,<dest chain name>', 'Send greeting message', list)
-      .option('-g, --get <chain name>,<dest chain name>,<id>', 'Get greeting message', list)
+      .option('-g, --get <chain name>,<dest chain name>', 'Get greeting message', list)
       .option('-t, --transfer <chain name>,<address>', 'Transfer ownership', list)
       .option('-c, --clear <chain name>,<dest chain name>', 'Clear messages from destination chain contract', list)
       .parse(process.argv);

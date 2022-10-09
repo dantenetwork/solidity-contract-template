@@ -3,23 +3,35 @@ This repo will show you how to develop a contract in solidity with the feature o
 
 ## Usage
 ### Initialize Project
+#### Use the Template
 Click `Use this template` to start your multi-ecosystem dApp, and then install
 ```
 npm install
 ```
 
-Or you can use our SDK in a new solidity project
+Both examples `Greetings.sol` and `OCComputing.sol`, which will be specified later, can be used as templates.
+
+#### Use SDK directly
+You can also use our SDK in a **new solidity project**
 ```
+mkdir <PROJECT_NAME> && cd <PROJECT_NAME>
+truffle init
+npm init -y
 npm install @hthuang/contracts
 ```
 
-### Use SDK
 Add the following code into your `.sol` file
 ```
-import "@hthuang/contracts/interfaces/ICrossChain.sol";
+import "@hthuang/contracts/ContractAdvanced.sol";
 ```
 
 Then you can use the interface of underlying cross-chain contract and message structures.
+
+### Cross-chain contract address
+```
+0x2999fe13d3CAa63C0bC523E8D5b19A265637dbd2
+```
+The cross-chain contract address is configured [here](./config/default.json)
 
 ## Specification
 The SDK provides users with two base contracts, which have some basic methods to finish cross-chain communication.
