@@ -7,30 +7,30 @@
 		"chainId": 43113,
 		"interface": "EVM"
 	},
-	// "BSCTEST": {
-	// 	"nodeAddress": "https://data-seed-prebsc-1-s1.binance.org:8545",
-	// 	"crossChainContractAddress": "0x5950b420377Ac8128485D54307762FC952e14CD4",
-	// 	"greetingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
-	// 	"computingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
-	// 	"chainId": 97,
-	// 	"interface": "EVM"
-	// },
-	// "RINKEBY": {
-	// 	"nodeAddress": "https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
-	// 	"crossChainContractAddress": "0x359d5510405093f7Ea15408a0A3F52c52730A77e",
-	// 	"greetingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
-	// 	"computingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
-	// 	"chainId": 4,
-	// 	"interface": "EVM"
-	// },
-	// "PLATONEVMDEV": {
-	// 	"nodeAddress": "http://35.247.155.162:6789",
-	// 	"crossChainContractAddress": "0x5947661057f484BEC375Fb9d53F81973f9202fbc",
-	// 	"greetingContractAddress": "0x61Cd7e3445B80ef24826231d81543D1eEE54e51A",
-	// 	"computingContractAddress": "0x0728E64D9D0f1C15F0799fD3e19607A2e5649c9b",
-	// 	"chainId": 210309,
-	// 	"interface": "EVM"
-	// },
+	"BSCTEST": {
+		"nodeAddress": "https://data-seed-prebsc-1-s1.binance.org:8545",
+		"crossChainContractAddress": "0x5950b420377Ac8128485D54307762FC952e14CD4",
+		"greetingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
+		"computingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
+		"chainId": 97,
+		"interface": "EVM"
+	},
+	"RINKEBY": {
+		"nodeAddress": "https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
+		"crossChainContractAddress": "0x359d5510405093f7Ea15408a0A3F52c52730A77e",
+		"greetingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
+		"computingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
+		"chainId": 4,
+		"interface": "EVM"
+	},
+	"PLATONEVMDEV": {
+		"nodeAddress": "http://35.247.155.162:6789",
+		"crossChainContractAddress": "0x75aCA3c5B3553D1ef22765d958e1B2cfb7DfE19B",
+		"greetingContractAddress": "0xB9472eD3554D75fFE99890EB08090788fe7Fc1Ea",
+		"computingContractAddress": "0x953Ee555067F2f299A22E70BE73d57943a1001Be",
+		"chainId": 210309,
+		"interface": "EVM"
+	},
 	"MOONBASEALPHA": {
 		"nodeAddress": "https://rpc.api.moonbase.moonbeam.network",
 		"crossChainContractAddress": "0x197D00ff70372A48c10cAe8205680c9a9f5F8370",
@@ -39,24 +39,24 @@
 		"chainId": 1287,
 		"interface": "EVM"
 	},
-	// "POLKADOT": {
-	// 	"computingContractAddress": "5CrMwAYTertsvXotJjLuib6Ah8y71Pvj2Sfor55dW5HZi1zp",
-	// 	"greetingContractAddress": "5Dw2hNmuM5abuRJ5ruVXdguTUNkv8Ljmuje4hUzcU6tx3gYS",
-	// 	"interface": "INK"
-	// },
+	"POLKADOT": {
+		"computingContractAddress": "5CrMwAYTertsvXotJjLuib6Ah8y71Pvj2Sfor55dW5HZi1zp",
+		"greetingContractAddress": "5Dw2hNmuM5abuRJ5ruVXdguTUNkv8Ljmuje4hUzcU6tx3gYS",
+		"interface": "INK"
+	},
 	"SHIBUYA": {
 		"computingContractAddress": "ZakeYTFPNkC9Cgceui2aBZ6G23nA6ieB3KVWfmdNDv6UfM1",
 		"greetingContractAddress": "a1mydsZDKLQJh8mwB1NZ86XVJ8ApiyNVWikMrhoLwoGfZex",
 		"interface": "INK"
 	},
 	"NEARTEST": {
-		"computingContractAddress": "f738bf496d14e9c2d4b734be2905a319253a7cc5775511434991b9f212224aab",
-		"greetingContractAddress": "99ff32da92227f302056389ce208d77e12f88a6ffd2cee1b238586cc4cc20bd7",
+		"computingContractAddress": "0x34646336316237376566313333366362303838376234613366313434343766323439336362643239656534626234346362373033373265366664333134326336",
+		"greetingContractAddress": "0x64386165376135313365656161333661346336613432313237353837646266306632616462626461303635323363306662613461313662643237353038396639",
 		"interface": "NEAR"
+	},
+	"ASTAR": {
+		"computingContractAddress": "0xA768Ed8CF4DeEE3Ff11e9fC8192F905D2FEa7313",
+		"greetingContractAddress": "0xb8732640D89BdeF45784B75321510313E0782AB2",
+		"interface": "INK"
 	}
-	// "ASTAR": {
-	// 	"computingContractAddress": "0xA768Ed8CF4DeEE3Ff11e9fC8192F905D2FEa7313",
-	// 	"greetingContractAddress": "0xb8732640D89BdeF45784B75321510313E0782AB2",
-	// 	"interface": "INK"
-	// }
 }

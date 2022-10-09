@@ -4,8 +4,8 @@
         "receiveComputeTask": "0x47e50a42"
 	},
 	"NEAR": {
-        "receiveGreeting": "receive_greeting",
-        "receiveComputeTask": "receive_compute_task"
+        "receiveGreeting": "0x726563656976655f6772656574696e67",
+        "receiveComputeTask": "0x726563656976655f636f6d707574655f7461736b"
 	},
 	"INK": {
         "receiveGreeting": "0x0c724dc2",

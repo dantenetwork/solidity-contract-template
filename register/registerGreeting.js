@@ -67,8 +67,8 @@ async function sendGreeting(fromChain, toChain) {
     [toChain, [fromChain, 'Greetings', 'Greeting from ' + fromChain, getCurrentDate()]]);
 }
 
-async function getGreeting(chainName, id) {
-  return await ethereum.contractCall(contract, 'greetings', [chainName, id]);
+async function getGreeting(chainName) {
+  return await ethereum.contractCall(contract, 'getGreetings', [chainName]);
 }
 
 async function transfer(address) {
@@ -123,15 +123,15 @@ async function clear(chainName) {
     await sendGreeting(program.opts().send[0], program.opts().send[1]);
   }
   else if (program.opts().get) {
-    if (program.opts().get.length != 3) {
-        console.log('3 arguments are needed, but ' + program.opts().get.length + ' provided');
+    if (program.opts().get.length != 2) {
+        console.log('2 arguments are needed, but ' + program.opts().get.length + ' provided');
         return;
     }
 
     if (!init(program.opts().get[0])) {
         return;
     }
-    let greeting = await getGreeting(program.opts().get[1], program.opts().get[2]);
+    let greeting = await getGreeting(program.opts().get[1]);
     console.log('greeting', greeting);
   }
   else if (program.opts().transfer) {
