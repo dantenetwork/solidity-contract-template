@@ -65,7 +65,7 @@ This method can send a cross-chain call to a contract on another chain with a ca
 This method can send a result back to the contract of the source chain.
 
 
-### Usage Example
+### Dev Example
 The usage of the two above API can be found at [OCComputing.sol](./contracts/OCComputing.sol), and the key points are as follow:
 * Call out and get call-back  
 [call out](./contracts/OCComputing.sol#L39)
