@@ -62,7 +62,7 @@ Located at [CrossChain/ContractAdvanced.sol](./contracts/CrossChain/ContractAdva
 This method can send a cross-chain call to a contract on another chain with a callback handler.
 
 **[crossChainRespond](./contracts/CrossChain/ContractAdvanced.sol#L41)**  
-This method can call a callback to then contract of the source chain.
+This method can send a result back to the contract of the source chain.
 
 
 ### Usage Example
