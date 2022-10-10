@@ -56,35 +56,163 @@ function getContext() public view returns (SimplifiedMessage memory) {
 ```
 
 ### ContractAdvanced
-Located at `CrossChain/ContractAdvanced.sol`.
+Located at [CrossChain/ContractAdvanced.sol](./contracts/CrossChain/ContractAdvanced.sol).
 
-**crossChainCall**
+**[crossChainCall](./contracts/CrossChain/ContractAdvanced.sol#L22)**  
 This method can send a cross-chain call to a contract on another chain with a callback handler.
+
+**[crossChainRespond](./contracts/CrossChain/ContractAdvanced.sol#L41)**  
+This method can call a callback to then contract of the source chain.
+
+
+### Usage Example
+The usage of the two above API can be found at [OCComputing.sol](./contracts/OCComputing.sol), and the key points are as follow:
+* Call out and get call-back  
+[call out](./contracts/OCComputing.sol#L39)
+```solidity
+// --snip--
+// Construct payload
+    Payload memory data;
+    data.items = new PayloadItem[](1);
+    PayloadItem memory item = data.items[0];
+    item.name = "nums";
+    item.msgType = MsgType.EvmU32Array;
+    item.value = abi.encode(_nums);
+
+    SQoS[] memory sqos;
+    uint256 id = crossChainCall(
+        _toChain,
+        destnContract.contractAddress,
+        destnContract.funcName,
+        sqos,
+        data,
+        OCComputing.receiveComputeTaskCallback.selector
+    );
+// --snip--
 ```
-function crossChainCall(string memory _destnChainName, string memory _destnContractName,
-    string memory _funcName, SQoS[] memory _sqos, Payload memory _data, bytes4 _callback) internal returns (uint256) {
-    ISentMessage memory message;
-    message.toChain = _destnChainName;
-    message.sqos = _sqos;
-    message.session = Session(0, bytes.concat(_callback));
-    message.content = Content(_destnContractName, _funcName, _data);
-    return crossChainContract.sendMessage(message);
+[OCComputing.receiveComputeTaskCallback.selector](./contracts/OCComputing.sol#L121) is the callback function to receive the response.
+
+```solidity
+// --snip--
+    (uint32 _result) = abi.decode(_payload.items[0].value, (uint32));
+    SimplifiedMessage memory context = getContext();
+    uint256 index = 0;
+    bool found = false;
+    for (uint256 i = 0; i < ocResult[context.fromChain].length; i++) {
+        if (ocResult[context.fromChain][i].session == context.session.id) {
+            found = true;
+            index = i;
+            break;
+        }
+    }
+
+// --snip--
+```
+`getContext()` provides a context of this response, including `context.session.id` related to the previous call.
+
+* [Receive remote invocation and response to it](./contracts/OCComputing.sol#L75)  
+
+```solidity
+// --snip--
+    // decode
+    (uint32[] memory _nums) = abi.decode(_payload.items[0].value, (uint32[]));
+    
+    // compute
+    uint ret = 0;
+    for (uint i = 0; i < _nums.length; i++) {
+        ret += _nums[i];
+    }
+
+    // Construct payload
+    Payload memory data;
+    data.items = new PayloadItem[](1);
+    PayloadItem memory item = data.items[0];
+    item.name = "result";
+    item.msgType = MsgType.EvmU32;
+    item.value = abi.encode(ret);
+
+    SQoS[] memory sqos;
+    crossChainRespond(sqos, data);
+// --snip--
+```
+The result is setted into a `Payload`, and `crossChainRespond` helps send the response out.
+
+### Related Date Structure
+* Payload
+`Payload` is the message load can be understood among different tech stacks, the defination of which is as below:
+```solidity
+enum MsgType {
+    EvmString,
+    EvmU8,
+    EvmU16,
+    EvmU32,
+    EvmU64,
+    EvmU128,
+    EvmI8,
+    EvmI16,
+    EvmI32,
+    EvmI64,
+    EvmI128,
+    EvmStringArray,
+    EvmU8Array,
+    EvmU16Array,
+    EvmU32Array,
+    EvmU64Array,
+    EvmU128Array,
+    EvmI8Array,
+    EvmI16Array,
+    EvmI32Array,
+    EvmI64Array,
+    EvmI128Array
+}
+
+struct PayloadItem {
+    string name;
+    MsgType msgType;
+    bytes value;
+}
+
+struct Payload {
+    PayloadItem[] items;
 }
 ```
 
-**crossChainRespond**
-This method can call a callback to then contract of the source chain.
-```
-function crossChainRespond(SQoS[] memory _sqos, Payload memory _data) internal returns (uint256) {
-    SimplifiedMessage memory context = getContext();
-    ISentMessage memory message;
-    message.toChain = context.fromChain;
-    message.sqos = _sqos;
-    message.session = Session(context.id, "");
-    message.content = Content(context.sender, string(context.session.callback), _data);
-    return crossChainContract.sendMessage(message);
+* SQoS  
+`SQoS` is the security demand of an invocation.
+```solidity
+enum SQoSType {
+    Reveal,
+    Challenge,
+    Threshold,
+    Priority,
+    ExceptionRollback,
+    SelectionDelay,
+    Anonymous,
+    Identity,
+    Isolation,
+    CrossVerify
+}
+
+struct SQoS {
+    SQoSType t;
+    bytes v;
 }
 ```
+
+* session  
+`session` provides a relationship between call-out and call-back, as the invocations between different chains are asynchronous.
+```solidity
+struct Session {
+    // 0: request message
+    // > 0: response message
+    uint256 id;
+    uint8 sessionType;
+    bytes callback;
+    bytes commitment;
+    bytes answer;
+}
+```
+
 
 ## Examples
 There are two examples:
