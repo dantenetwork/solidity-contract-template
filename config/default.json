@@ -23,6 +23,14 @@
 		"chainId": 210309,
 		"interface": "EVM"
 	},
+	"PLATONEVM": {
+		"nodeAddress": "https://openapi2.platon.network/rpc",
+		"crossChainContractAddress": "0xf61C4699B99d1988EB235AF06F270029D9Ed3b63",
+		"greetingContractAddress": "0xbd2c1e271A60281AAeD8F42A91613fbD3ae18B65",
+		"computingContractAddress": "0xD756Dcfc5F37D545496DbE12256b290e49B8Bfe3",
+		"chainId": 210425,
+		"interface": "EVM"
+	},
 	"MOONBASEALPHA": {
 		"nodeAddress": "https://rpc.api.moonbase.moonbeam.network",
 		"crossChainContractAddress": "0x197D00ff70372A48c10cAe8205680c9a9f5F8370",
@@ -37,8 +45,8 @@
 		"interface": "INK"
 	},
 	"SHIBUYA": {
-		"computingContractAddress": "ZakeYTFPNkC9Cgceui2aBZ6G23nA6ieB3KVWfmdNDv6UfM1",
-		"greetingContractAddress": "a1mydsZDKLQJh8mwB1NZ86XVJ8ApiyNVWikMrhoLwoGfZex",
+		"computingContractAddress": "0x53e46958440e1c874f84ec3740ce1e96bc8af898cfa808a6cd138dce43718f4c",
+		"greetingContractAddress": "0x8aee7ff290d07e8f75901e360b8dd84dd169d0a12df9d1bf0cdbbd56b4a00975",
 		"interface": "INK"
 	},
 	"NEARTEST": {

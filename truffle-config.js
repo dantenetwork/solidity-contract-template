@@ -46,6 +46,11 @@ module.exports = {
       provider: () => new HDWalletProvider(mnemonic, `https://api.avax-test.network/ext/bc/C/rpc`),
       network_id: "*",       // Any network (default: none)
     },
+    // PlatON main network bases on evm
+    PLATONEVM: {
+      provider: () => new HDWalletProvider(mnemonic, `wss://openapi2.platon.network/ws`),
+      network_id: "*",       // Any network (default: none)
+    },
     // PlatON development network bases on evm
     PLATONEVMDEV: {
       provider: () => new HDWalletProvider(mnemonic, `wss://devnetopenapi2.platon.network/ws`),
