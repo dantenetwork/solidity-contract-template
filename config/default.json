@@ -27,7 +27,7 @@
 		"nodeAddress": "https://openapi2.platon.network/rpc",
 		"crossChainContractAddress": "0xf61C4699B99d1988EB235AF06F270029D9Ed3b63",
 		"greetingContractAddress": "0xbd2c1e271A60281AAeD8F42A91613fbD3ae18B65",
-		"computingContractAddress": "0xD756Dcfc5F37D545496DbE12256b290e49B8Bfe3",
+		"computingContractAddress": "0x73D01079F4833D4Bcea07e87C47f818189F5EF3a",
 		"chainId": 210425,
 		"interface": "EVM"
 	},
