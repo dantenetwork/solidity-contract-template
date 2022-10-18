@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./CrossChain/ContractAdvanced.sol";
 
 uint256 constant CALLER_NOT_CROSS_CHAIN_CONTRACT = 100;
+uint256 constant RECORDS_NOT_FOUND = 101;
 
 // `OCComputing` is an example of multi-chain services with necessary implementations in `ContractAdvanced`, which provides basic cross-chain call interfaces.
 contract OCComputing is ContractAdvanced {
@@ -134,7 +135,11 @@ contract OCComputing is ContractAdvanced {
                 break;
             }
         }
-        require(found, "Not found");
+
+        if (!found) {
+            return RECORDS_NOT_FOUND;
+        }
+
         OCResult storage result = ocResult[context.fromChain][index];
         result.used = true;
         result.result = _result;
