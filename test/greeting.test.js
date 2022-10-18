@@ -47,6 +47,8 @@ contract('Greetings', function(accounts) {
     describe('Send Greeting', function() {
         it('should execute successfully ', async () => {
             await greeting.sendGreeting('PLATONEVMDEV', ['PLATON', 'Greetings', 'Greeting from PLATON', 'Current date'], {from: owner});
+            let messages = await greeting.getSentGreetings('PLATONEVMDEV');
+            assert(messages.length == 1);
         });
     });
 
