@@ -1,67 +1,26 @@
 {
 	"BSCTEST": {
 		"nodeAddress": "https://data-seed-prebsc-1-s1.binance.org:8545",
-		"crossChainContractAddress": "0x5950b420377Ac8128485D54307762FC952e14CD4",
-		"greetingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
-		"computingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
 		"chainId": 97,
-		"interface": "EVM"
+		"interface": "EVM",
+		"crossChainContractAddress": "0xB4b5Bb49c2390A1c059582Ed79571e4D3A76E4eF",
+		"greetingContractAddress": "0xa98E89273263165E0d5c5A23b931d09b896312C6",
+		"computingContractAddress": "0xCA0f056300aF6F282D308451c0e9005Df5127d3E"
 	},
-	"RINKEBY": {
-		"nodeAddress": "https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
-		"crossChainContractAddress": "0x359d5510405093f7Ea15408a0A3F52c52730A77e",
-		"greetingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
-		"computingContractAddress": "0x7E54B8139cff4153392Cc7B546B468152c70B5B3",
-		"chainId": 4,
-		"interface": "EVM"
+	"MUMBAI": {
+		"nodeAddress": "https://polygon-testnet.blastapi.io/38a248ff-baca-4a46-81cb-b188786053ab",
+		"chainId": 80001,
+		"interface": "EVM",
+		"crossChainContractAddress": "0xB4b5Bb49c2390A1c059582Ed79571e4D3A76E4eF",
+		"greetingContractAddress": "0xa98E89273263165E0d5c5A23b931d09b896312C6",
+		"computingContractAddress": "0xCA0f056300aF6F282D308451c0e9005Df5127d3E"
 	},
-	"PLATONEVMDEV": {
-		"nodeAddress": "http://35.247.155.162:6789",
-		"crossChainContractAddress": "0x75aCA3c5B3553D1ef22765d958e1B2cfb7DfE19B",
-		"greetingContractAddress": "0xB9472eD3554D75fFE99890EB08090788fe7Fc1Ea",
-		"computingContractAddress": "0x953Ee555067F2f299A22E70BE73d57943a1001Be",
-		"chainId": 210309,
-		"interface": "EVM"
-	},
-	"PLATONEVM": {
-		"nodeAddress": "https://openapi2.platon.network/rpc",
-		"crossChainContractAddress": "0xf61C4699B99d1988EB235AF06F270029D9Ed3b63",
-		"greetingContractAddress": "0xbd2c1e271A60281AAeD8F42A91613fbD3ae18B65",
-		"computingContractAddress": "0x73D01079F4833D4Bcea07e87C47f818189F5EF3a",
-		"chainId": 210425,
-		"interface": "EVM"
-	},
-	"MOONBASEALPHA": {
-		"nodeAddress": "https://rpc.api.moonbase.moonbeam.network",
-		"crossChainContractAddress": "0x197D00ff70372A48c10cAe8205680c9a9f5F8370",
-		"greetingContractAddress": "0xC0F1706106D2d7208C6586d1C8Aec520d99E9F14",
-		"computingContractAddress": "0x711cb9B41Ae7862b5961a134703Cd6B5f16dAdF5",
-		"chainId": 1287,
-		"interface": "EVM"
-	},
-	"POLKADOT": {
-		"computingContractAddress": "5CrMwAYTertsvXotJjLuib6Ah8y71Pvj2Sfor55dW5HZi1zp",
-		"greetingContractAddress": "5Dw2hNmuM5abuRJ5ruVXdguTUNkv8Ljmuje4hUzcU6tx3gYS",
-		"interface": "INK"
-	},
-	"SHIBUYA": {
-		"computingContractAddress": "0x53e46958440e1c874f84ec3740ce1e96bc8af898cfa808a6cd138dce43718f4c",
-		"greetingContractAddress": "0x8aee7ff290d07e8f75901e360b8dd84dd169d0a12df9d1bf0cdbbd56b4a00975",
-		"interface": "INK"
-	},
-	"NEARTEST": {
-		"computingContractAddress": "0x34646336316237376566313333366362303838376234613366313434343766323439336362643239656534626234346362373033373265366664333134326336",
-		"greetingContractAddress": "0x64386165376135313365656161333661346336613432313237353837646266306632616462626461303635323363306662613461313662643237353038396639",
-		"interface": "NEAR"
-	},
-	"ASTAR": {
-		"computingContractAddress": "0xA768Ed8CF4DeEE3Ff11e9fC8192F905D2FEa7313",
-		"greetingContractAddress": "0xb8732640D89BdeF45784B75321510313E0782AB2",
-		"interface": "INK"
-	},
-	"FLOWTEST": {
-		"computingContractAddress": "0xc133efc4b43676a0",
-		"greetingContractAddress": "0x86fc6f40cd9f9c66",
-		"interface": "FLOW"
+	"SEPOLIA": {
+		"nodeAddress": "https://sepolia.infura.io/v3/94ebec44ffc34501898dd5dccf387f81",
+		"chainId": 11155111,
+		"interface": "EVM",
+		"crossChainContractAddress": "0xB4b5Bb49c2390A1c059582Ed79571e4D3A76E4eF",
+		"greetingContractAddress": "0xa98E89273263165E0d5c5A23b931d09b896312C6",
+		"computingContractAddress": "0xCA0f056300aF6F282D308451c0e9005Df5127d3E"
 	}
 }

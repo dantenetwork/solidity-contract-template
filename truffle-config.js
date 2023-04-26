@@ -62,13 +62,18 @@ module.exports = {
       network_id: "*",       // Any network (default: none)
     },
     // Ethereum testnet
-    RINKEBY: {
-      provider: () => new HDWalletProvider(mnemonic, `wss://rinkeby.infura.io/ws/v3/94ebec44ffc34501898dd5dccf387f81`),
+    SEPOLIA: {
+      provider: () => new HDWalletProvider(mnemonic, `https://sepolia.infura.io/v3/94ebec44ffc34501898dd5dccf387f81`),
       network_id: "*",       // Any network (default: none)
     },
     // Moonbeam testnet
     MOONBASEALPHA: {
       provider: () => new HDWalletProvider(mnemonic, `wss://moonbeam-alpha.api.onfinality.io/public-ws`),
+      network_id: "*",       // Any network (default: none)
+    },
+    // Polygon testnet
+    MUMBAI: {
+      provider: () => new HDWalletProvider(mnemonic, `https://polygon-testnet.blastapi.io/38a248ff-baca-4a46-81cb-b188786053ab`),
       network_id: "*",       // Any network (default: none)
     },
   },
