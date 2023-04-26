@@ -11,11 +11,8 @@ module.exports = {
       const data = targetContract.methods[methodName]
         .apply(targetContract.methods, arguments)
         .encodeABI();  // encode ABI
-      // const gas = provider.utils.numberToHex(
-      //   parseInt((await provider.eth.getBlock('latest')).gasLimit - 1));
-      const gas = 1000000;
+      const gas = await targetContract.methods[methodName].apply(null, arguments).estimateGas({from: account});
       let gasPrice = await provider.eth.getGasPrice();
-      gasPrice = 50000000000;
 
       const tx = { account, to, chainId, data, nonce, gasPrice, gas };
       console.log(tx);
