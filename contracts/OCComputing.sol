@@ -4,18 +4,22 @@ pragma solidity >=0.8.0 <0.9.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./CrossChain/ContractAdvanced.sol";
 
+uint256 constant CALLER_NOT_CROSS_CHAIN_CONTRACT = 100;
+
 // `OCComputing` is an example of multi-chain services with necessary implementations in `ContractAdvanced`, which provides basic cross-chain call interfaces.
 contract OCComputing is ContractAdvanced {
     // Destination contract info
     struct DestnContract {
-        string contractAddress; // destination contract address
-        string funcName; // destination contract action name
+        bytes contractAddress; // destination contract address
+        bytes funcName; // destination contract action name
         bool used;
     }
 
     struct OCResult {
         bool used;
-        uint256 result;
+        uint32 result;
+        uint32 expected;
+        uint256 session;
     }
 
     // Cross-chain destination contract map
@@ -24,10 +28,8 @@ contract OCComputing is ContractAdvanced {
     // Cross-chain permitted contract map
     mapping(string => mapping(string => string)) public permittedContractMap;
 
-    // Outsourcing computing data cache
-    mapping(uint256 => uint256[]) cachedData;
     // Outsourcing computing result
-    mapping(string => mapping(uint256 => OCResult)) public ocResult;
+    mapping(string => OCResult[]) public ocResult;
     
     /**
      * Send outsourcing computing task to other chain
@@ -48,7 +50,7 @@ contract OCComputing is ContractAdvanced {
         item.value = abi.encode(_nums);
 
         SQoS[] memory sqos;
-        uint id = crossChainCall(
+        uint256 id = crossChainCall(
             _toChain,
             destnContract.contractAddress,
             destnContract.funcName,
@@ -56,18 +58,24 @@ contract OCComputing is ContractAdvanced {
             data,
             OCComputing.receiveComputeTaskCallback.selector
         );
-        cachedData[id] = _nums;
+        OCResult storage result = ocResult[_toChain].push();
+
+        uint32 sum = 0;
+        for (uint256 i = 0; i < _nums.length; i++) {
+            sum += _nums[i];
+        }
+        result.expected = sum;
+        result.session = id;
     }
 
     /**
      * Receives outsourcing computing task from other chain
      * @param _payload - payload which contains nums to be accumulated
      */
-    function receiveComputeTask(Payload calldata _payload) external {
-        require(
-            msg.sender == address(crossChainContract),
-            "Locker: caller is not CrossChain"
-        );
+    function receiveComputeTask(Payload calldata _payload) external returns (uint256) {
+        if (msg.sender != address(crossChainContract)) {
+            return CALLER_NOT_CROSS_CHAIN_CONTRACT;
+        }
 
         // decode
         (uint32[] memory _nums) = abi.decode(_payload.items[0].value, (uint32[]));
@@ -87,22 +95,51 @@ contract OCComputing is ContractAdvanced {
         item.value = abi.encode(ret);
         SQoS[] memory sqos;
         crossChainRespond(sqos, data);
+
+        return 0;
+    }
+
+    /**
+     * Clear historical messages
+     * @param _chainName - The chain which messages come from
+     */
+    function clear(string calldata _chainName) external onlyOwner {
+        delete ocResult[_chainName];
+    }
+
+    /**
+     * Returns all tasks
+     * @param _chainName - The chain which messages come from
+     */
+    function getResults(string calldata _chainName) external view returns (OCResult[] memory) {
+        return ocResult[_chainName];
     }
 
     /**
      * See IOCComputing
      */
-    function receiveComputeTaskCallback(Payload calldata _payload) external {
-        require(
-            msg.sender == address(crossChainContract),
-            "Locker: caller is not CrossChain"
-        );
+    function receiveComputeTaskCallback(Payload calldata _payload) external returns (uint256) {
+        if (msg.sender != address(crossChainContract)) {
+            return CALLER_NOT_CROSS_CHAIN_CONTRACT;
+        }
 
         (uint32 _result) = abi.decode(_payload.items[0].value, (uint32));
         SimplifiedMessage memory context = getContext();
-        OCResult storage result = ocResult[context.fromChain][context.session.id];
+        uint256 index = 0;
+        bool found = false;
+        for (uint256 i = 0; i < ocResult[context.fromChain].length; i++) {
+            if (ocResult[context.fromChain][i].session == context.session.id) {
+                found = true;
+                index = i;
+                break;
+            }
+        }
+        require(found, "Not found");
+        OCResult storage result = ocResult[context.fromChain][index];
         result.used = true;
         result.result = _result;
+
+        return 0;
     }
 
     ///////////////////////////////////////////////
@@ -119,8 +156,8 @@ contract OCComputing is ContractAdvanced {
     function registerDestnContract(
         string calldata _funcName,
         string calldata _toChain,
-        string calldata _contractAddress,
-        string calldata _contractFuncName
+        bytes calldata _contractAddress,
+        bytes calldata _contractFuncName
     ) external onlyOwner {
         mapping(string => DestnContract) storage map = destnContractMap[_toChain];
         DestnContract storage destnContract = map[_funcName];
@@ -160,7 +197,7 @@ contract OCComputing is ContractAdvanced {
     function verify(
         string calldata _chainName,
         bytes4 _funcName,
-        string calldata _sender
+        bytes calldata _sender
     ) public view virtual returns (bool) {
         // mapping(string => string) storage map = permittedContractMap[
         //     _chainName

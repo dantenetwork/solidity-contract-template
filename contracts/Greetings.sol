@@ -4,13 +4,15 @@ pragma solidity >=0.8.0 <0.9.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./CrossChain/ContractBase.sol";
 
+uint256 constant CALLER_NOT_CROSS_CHAIN_CONTRACT = 100;
+
 // `Greetings` is an example of multi-chain services with necessary implementations in `ContractBase`, without which the user defined contract cannot work.
 // And besides, `registerDestnContract` and `registerPermittedContract` are templete implementations make the management of some user defined informations easier.
 contract Greetings is ContractBase {
     // Destination contract info
     struct DestnContract {
-        string contractAddress; // destination contract address
-        string funcName; // destination contract action name
+        bytes contractAddress; // destination contract address
+        bytes funcName; // destination contract action name
         bool used;
     }
 
@@ -20,6 +22,7 @@ contract Greetings is ContractBase {
         string title;
         string content;
         string date;
+        uint256 session;
     }
 
     // Cross-chain destination contract map
@@ -29,17 +32,16 @@ contract Greetings is ContractBase {
     mapping(string => mapping(bytes4 => string)) public permittedContractMap;
 
     // Store greetings
-    mapping(string => mapping(uint256 => Greeting)) public greetings;
+    mapping(string => Greeting[]) public greetings;
 
     /**
      * Receive greeting info from other chains
      * @param _payload - payload which contains greeting message
      */
-    function receiveGreeting(Payload calldata _payload) public {
-        require(
-            msg.sender == address(crossChainContract),
-            "Locker: caller is not CrossChain"
-        );
+    function receiveGreeting(Payload calldata _payload) public returns (uint256) {
+        if (msg.sender != address(crossChainContract)) {
+            return CALLER_NOT_CROSS_CHAIN_CONTRACT;
+        }
 
         // `context` used for verify the operation authority
         SimplifiedMessage memory context = getContext();
@@ -47,8 +49,10 @@ contract Greetings is ContractBase {
         // require(context.sqos.reveal == 1, "SQoS invalid!");
 
         (string[] memory _value) = abi.decode(_payload.items[0].value, (string[]));
-        Greeting memory _greeting = Greeting(_value[0], _value[1], _value[2], _value[3]);
-        greetings[context.fromChain][context.id] = _greeting;
+        Greeting memory _greeting = Greeting(_value[0], _value[1], _value[2], _value[3], context.id);
+        greetings[context.fromChain].push(_greeting);
+
+        return 0;
     }
 
     /**
@@ -74,10 +78,26 @@ contract Greetings is ContractBase {
 
         ISentMessage memory message;
         message.toChain = _toChain;
-        message.session = Session(0, "");
+        message.session = Session(0, 0, "", "", "");
         message.content = Content(destnContract.contractAddress, destnContract.funcName, data);
 
         crossChainContract.sendMessage(message);
+    }
+
+    /**
+     * Clear historical messages
+     * @param _chainName - The chain which messages come from
+     */
+    function clear(string calldata _chainName) external onlyOwner {
+        delete greetings[_chainName];
+    }
+
+    /**
+     * Returns all messages from a chain
+     * @param _chainName - The chain which messages come from
+     */
+    function getGreetings(string calldata _chainName) external view returns (Greeting[] memory) {
+        return greetings[_chainName];
     }
 
     ///////////////////////////////////////////////
@@ -94,8 +114,8 @@ contract Greetings is ContractBase {
     function registerDestnContract(
         string calldata _funcName,
         string calldata _toChain,
-        string calldata _contractAddress,
-        string calldata _contractFuncName
+        bytes calldata _contractAddress,
+        bytes calldata _contractFuncName
     ) external onlyOwner {
         mapping(string => DestnContract) storage map = destnContractMap[_toChain];
         DestnContract storage destnContract = map[_funcName];
@@ -135,7 +155,7 @@ contract Greetings is ContractBase {
     function verify(
         string calldata _chainName,
         bytes4 _funcName,
-        string calldata _sender
+        bytes calldata _sender
     ) public view virtual returns (bool) {
         // mapping(bytes4 => string) storage map = permittedContractMap[
         //     _chainName

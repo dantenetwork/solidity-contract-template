@@ -67,12 +67,16 @@ async function sendGreeting(fromChain, toChain) {
     [toChain, [fromChain, 'Greetings', 'Greeting from ' + fromChain, getCurrentDate()]]);
 }
 
-async function getGreeting(chainName, id) {
-  return await ethereum.contractCall(contract, 'greetings', [chainName, id]);
+async function getGreeting(chainName) {
+  return await ethereum.contractCall(contract, 'getGreetings', [chainName]);
 }
 
 async function transfer(address) {
   await ethereum.sendTransaction(web3, netConfig.chainId, contract, 'transferOwnership', testAccountPrivateKey, [address]);
+}
+
+async function clear(chainName) {
+  await ethereum.sendTransaction(web3, netConfig.chainId, contract, 'clear', testAccountPrivateKey, [chainName]);
 }
 
 (async function () {
@@ -85,8 +89,9 @@ async function transfer(address) {
       .option('-i, --initialize <chain name>', 'Initialize greeting contract')
       .option('-r, --register <chain name>,<dest chain name>', 'Register destination chain contract', list)
       .option('-s, --send <chain name>,<dest chain name>', 'Send greeting message', list)
-      .option('-g, --get <chain name>,<dest chain name>,<id>', 'Get greeting message', list)
+      .option('-g, --get <chain name>,<dest chain name>', 'Get greeting message', list)
       .option('-t, --transfer <chain name>,<address>', 'Transfer ownership', list)
+      .option('-c, --clear <chain name>,<dest chain name>', 'Clear messages from destination chain contract', list)
       .parse(process.argv);
 
   if (program.opts().initialize) {
@@ -118,8 +123,8 @@ async function transfer(address) {
     await sendGreeting(program.opts().send[0], program.opts().send[1]);
   }
   else if (program.opts().get) {
-    if (program.opts().get.length != 3) {
-        console.log('3 arguments are needed, but ' + program.opts().get.length + ' provided');
+    if (program.opts().get.length != 2) {
+        console.log('2 arguments are needed, but ' + program.opts().get.length + ' provided');
         return;
     }
 
@@ -139,5 +144,16 @@ async function transfer(address) {
           return;
       }
       await transfer(program.opts().transfer[1]);
+  }
+  else if (program.opts().clear) {
+      if (program.opts().clear.length != 2) {
+          console.log('2 arguments are needed, but ' + program.opts().clear.length + ' provided');
+          return;
+      }
+      
+      if (!init(program.opts().clear[0])) {
+          return;
+      }
+      await clear(program.opts().clear[1]);
   }
 }());

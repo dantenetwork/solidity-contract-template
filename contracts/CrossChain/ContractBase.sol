@@ -15,7 +15,7 @@ contract ContractBase is Ownable {
         crossChainContract = ICrossChain(_address);
     }
 
-    // return context info
+    // Returns context info
     function getContext() public view returns (SimplifiedMessage memory) {
         return crossChainContract.getCurrentMessage();
     }

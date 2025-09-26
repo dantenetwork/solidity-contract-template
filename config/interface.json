@@ -3,6 +3,10 @@
         "receiveGreeting": "0x2d436822",
         "receiveComputeTask": "0x47e50a42"
 	},
+	"FLOW": {
+        "receiveGreeting": "0x4772656574696e67526563766572",
+        "receiveComputeTask": "0x636f6d7075746174696f6e536572766572"
+	},
 	"NEAR": {
         "receiveGreeting": "receive_greeting",
         "receiveComputeTask": "receive_compute_task"
